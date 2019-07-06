@@ -19,53 +19,56 @@ class Predictor(object):
         self.off_ss_fpr_tpr = pd.read_csv(off_ss_fpr_tpr, sep='\t')
         self.logger = logging.getLogger(__name__)
 
-    def predict(self, ifname, ofname):
+    def predict(self, ifname, ofname, skip=False):
         """
         Predict diseasing-causing probability of all intronic SNVs
         :param ifname: m x n input file. m is the number of SNVs, n is the number of features.
         :param ofname: output file prefix.
         """
-        self.logger.info('Loading all the features.')
-        data = pd.read_csv(ifname, sep='\t', header=0)
-        data_on_ss = data[(data['distance'] >= -13) & (data['distance'] <= 7) & (data['distance'] != 0)]
-        data_off_ss = data[(data['distance'] < -13) | (data['distance'] > 7)]
-        if not data_on_ss.empty:
-            self.logger.info('Predicting on splicing site SNVs.')
-            preds, scores = self._predict_on_ss(data_on_ss)
-            fpr, tpr, disease = self._cal_fpr_tpr(scores, True)
-            data_on_ss.insert(4, 'splicing_site', ['on'] * len(preds))
-            data_on_ss.insert(4, 'fpr', fpr)
-            data_on_ss.insert(4, 'tpr', tpr)
-            data_on_ss.insert(4, 'prob', scores[:, 1])
-            data_on_ss.insert(4, 'disease', disease)
+        if (not skip):
+            self.logger.info('Loading all the features.')
+            data = pd.read_csv(ifname, sep='\t', header=0)
+            data_on_ss = data[(data['distance'] >= -13) & (data['distance'] <= 7) & (data['distance'] != 0)]
+            data_off_ss = data[(data['distance'] < -13) | (data['distance'] > 7)]
+            if not data_on_ss.empty:
+                self.logger.info('Predicting on splicing site SNVs.')
+                preds, scores = self._predict_on_ss(data_on_ss)
+                fpr, tpr, disease = self._cal_fpr_tpr(scores, True)
+                data_on_ss.insert(4, 'splicing_site', ['on'] * len(preds))
+                data_on_ss.insert(4, 'fpr', fpr)
+                data_on_ss.insert(4, 'tpr', tpr)
+                data_on_ss.insert(4, 'prob', scores[:, 1])
+                data_on_ss.insert(4, 'disease', disease)
+            else:
+                data_on_ss.insert(4, 'splicing_site', '')
+                data_on_ss.insert(4, 'fpr', 0.0)
+                data_on_ss.insert(4, 'tpr', 0.0)
+                data_on_ss.insert(4, 'prob', 0.0)
+                data_on_ss.insert(4, 'disease', '')
+            if not data_off_ss.empty:
+                self.logger.info('Predicting off splicing site SNVs')
+                preds, scores = self._predict_off_ss(data_off_ss)
+                fpr, tpr, disease = self._cal_fpr_tpr(scores, False)
+                data_off_ss.insert(4, 'splicing_site', ['off'] * len(preds))
+                data_off_ss.insert(4, 'fpr', fpr)
+                data_off_ss.insert(4, 'tpr', tpr)
+                data_off_ss.insert(4, 'prob', scores[:, 1])
+                data_off_ss.insert(4, 'disease', disease)
+            else:
+                data_off_ss.insert(4, 'splicing_site', '')
+                data_off_ss.insert(4, 'fpr', 0.0)
+                data_off_ss.insert(4, 'tpr', 0.0)
+                data_off_ss.insert(4, 'prob', 0.0)
+                data_off_ss.insert(4, 'disease', '')
+            self.logger.info('Generate final output.')
+            result = pd.concat([data_on_ss, data_off_ss]).\
+                sort_values(by=['#chrom', 'pos'])
+            result.to_csv(ofname + '.txt', sep='\t', na_rep='NA', index=False)
+            records = result.loc[:, ['#chrom', 'pos', 'ref', 'alt', 'disease', 'prob', 'tpr', 'fpr', 'splicing_site', 'name', 'strand']].\
+                to_dict(orient='records')
+            json.dump({"data": records}, open(ofname + '.json', 'w'))
         else:
-            data_on_ss.insert(4, 'splicing_site', '')
-            data_on_ss.insert(4, 'fpr', 0.0)
-            data_on_ss.insert(4, 'tpr', 0.0)
-            data_on_ss.insert(4, 'prob', 0.0)
-            data_on_ss.insert(4, 'disease', '')
-        if not data_off_ss.empty:
-            self.logger.info('Predicting off splicing site SNVs')
-            preds, scores = self._predict_off_ss(data_off_ss)
-            fpr, tpr, disease = self._cal_fpr_tpr(scores, False)
-            data_off_ss.insert(4, 'splicing_site', ['off'] * len(preds))
-            data_off_ss.insert(4, 'fpr', fpr)
-            data_off_ss.insert(4, 'tpr', tpr)
-            data_off_ss.insert(4, 'prob', scores[:, 1])
-            data_off_ss.insert(4, 'disease', disease)
-        else:
-            data_off_ss.insert(4, 'splicing_site', '')
-            data_off_ss.insert(4, 'fpr', 0.0)
-            data_off_ss.insert(4, 'tpr', 0.0)
-            data_off_ss.insert(4, 'prob', 0.0)
-            data_off_ss.insert(4, 'disease', '')
-        self.logger.info('Generate final output.')
-        result = pd.concat([data_on_ss, data_off_ss]).\
-            sort_values(by=['#chrom', 'pos'])
-        result.to_csv(ofname + '.txt', sep='\t', na_rep='NA', index=False)
-        records = result.loc[:, ['#chrom', 'pos', 'ref', 'alt', 'disease', 'prob', 'tpr', 'fpr', 'splicing_site', 'name', 'strand']].\
-            to_dict(orient='records')
-        json.dump({"data": records}, open(ofname + '.json', 'w'))
+            data = pd.read_csv(ifname, sep='\t', header=0)
 
     def _predict_on_ss(self, data):
         """

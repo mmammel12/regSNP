@@ -8,6 +8,8 @@ import os.path
 import pandas as pd
 import pymongo import MongoClient
 import json
+import operator
+import csv
 
 from utils.vcf import VCF
 from utils.seq import FlankingSeq
@@ -56,87 +58,96 @@ class FeatureCalculator(object):
         snp.switch_alleles(os.path.join(out_dir_tmp, 'snp.sorted'),
                            ref_name, os.path.join(out_dir_tmp, 'snp.switched'))
 
-        # TODO pull data from db
+        # pull data from db
         self._queryDB()
 
-        # TODO put everything below in an if statement checking if snp.switched exists
+        # if snp.switched exists, compute remaining data
+        if (os.path.exists(os.path.join(out_dir_tmp, 'snp.switched'))):
+            # Annotate SNVs
+            self.logger.info('Annotating SNVs with ANNOVAR.')
+            annovar_path = os.path.expanduser(self.settings['annovar_path'])
+            annovar_db_path = os.path.expanduser(self.settings['annovar_db_path'])
+            annovar = Annovar(annovar_path, annovar_db_path)
+            annovar.annotate(os.path.join(out_dir_tmp, 'snp.switched'),
+                            os.path.join(out_dir_tmp, 'snp'))
 
-        # Annotate SNVs
-        self.logger.info('Annotating SNVs with ANNOVAR.')
-        annovar_path = os.path.expanduser(self.settings['annovar_path'])
-        annovar_db_path = os.path.expanduser(self.settings['annovar_db_path'])
-        annovar = Annovar(annovar_path, annovar_db_path)
-        annovar.annotate(os.path.join(out_dir_tmp, 'snp.switched'),
-                         os.path.join(out_dir_tmp, 'snp'))
+            # Calculate distance to closest protein coding exons and extract intronic SNVs
+            self.logger.info(
+                'Calculating distance to closest protein coding exons.')
+            protein_coding_exon_fname = os.path.join(
+                self.db_dir, 'hg19_ensGene_exon.bed')
+            closest_exon = ClosestExon(protein_coding_exon_fname)
+            closest_exon.get_closest_exon(os.path.join(out_dir_tmp, 'snp.intronic'),
+                                          os.path.join(out_dir_tmp, 'snp.distance'))
 
-        # Calculate distance to closest protein coding exons and extract intronic SNVs
-        self.logger.info(
-            'Calculating distance to closest protein coding exons.')
-        protein_coding_exon_fname = os.path.join(
-            self.db_dir, 'hg19_ensGene_exon.bed')
-        closest_exon = ClosestExon(protein_coding_exon_fname)
-        closest_exon.get_closest_exon(os.path.join(out_dir_tmp, 'snp.intronic'),
-                                      os.path.join(out_dir_tmp, 'snp.distance'))
+            if os.path.getsize(os.path.join(out_dir_tmp, 'snp.distance')) <= 0:
+                self.logger.error('No input SNVs are in valid intronic regions.')
+                raise RuntimeError('No input SNVs are in valid intronic regions.')
 
-        if os.path.getsize(os.path.join(out_dir_tmp, 'snp.distance')) <= 0:
-            self.logger.error('No input SNVs are in valid intronic regions.')
-            raise RuntimeError('No input SNVs are in valid intronic regions.')
+            # Extract flanking sequence
+            self.logger.info('Fetching flanking sequence.')
+            seq = FlankingSeq(ref_name, 20)
+            seq.fetch_flanking_seq(os.path.join(
+                out_dir_tmp, 'snp.distance'), os.path.join(out_dir_tmp, 'snp.seq'))
+            seq.fetch_flanking_seq(os.path.join(out_dir_tmp, 'snp.distance'), os.path.join(out_dir_tmp, 'snp.fa'),
+                                  otype='fasta')
+            seq.close()
 
-        # Extract flanking sequence
-        self.logger.info('Fetching flanking sequence.')
-        seq = FlankingSeq(ref_name, 20)
-        seq.fetch_flanking_seq(os.path.join(
-            out_dir_tmp, 'snp.distance'), os.path.join(out_dir_tmp, 'snp.seq'))
-        seq.fetch_flanking_seq(os.path.join(out_dir_tmp, 'snp.distance'), os.path.join(out_dir_tmp, 'snp.fa'),
-                               otype='fasta')
-        seq.close()
+            # Calculate RBP binding change
+            self.logger.info('Calculating RBP binding change.')
+            pssm_path = os.path.join(self.db_dir, 'motif/pwm')
+            pssm_list_fname = os.path.join(self.db_dir, 'motif/pwm_valid.txt')
+            ms_fname = os.path.join(self.db_dir, 'motif/binding_score_mean_sd.txt')
+            rbp = RBPChange(pssm_path, pssm_list_fname, ms_fname)
+            rbp.rbps.cal_matching_score(os.path.join(out_dir_tmp, 'snp.seq'),
+                                        os.path.join(out_dir_tmp, 'snp.rbp_score'))
+            rbp.cal_change(os.path.join(out_dir_tmp, 'snp.rbp_score'),
+                          os.path.join(out_dir_tmp, 'snp.rbp_change'))
 
-        # Calculate RBP binding change
-        self.logger.info('Calculating RBP binding change.')
-        pssm_path = os.path.join(self.db_dir, 'motif/pwm')
-        pssm_list_fname = os.path.join(self.db_dir, 'motif/pwm_valid.txt')
-        ms_fname = os.path.join(self.db_dir, 'motif/binding_score_mean_sd.txt')
-        rbp = RBPChange(pssm_path, pssm_list_fname, ms_fname)
-        rbp.rbps.cal_matching_score(os.path.join(out_dir_tmp, 'snp.seq'),
-                                    os.path.join(out_dir_tmp, 'snp.rbp_score'))
-        rbp.cal_change(os.path.join(out_dir_tmp, 'snp.rbp_score'),
-                       os.path.join(out_dir_tmp, 'snp.rbp_change'))
+            # Calculate protein structural features (disorder, secondary structure, ASA, Pfam, PTM)
+            self.logger.info('Extracting protein structural features.')
+            db_fname = os.path.join(self.db_dir, 'ensembl.db')
+            gene_pred_fname = os.path.join(self.db_dir, 'hg19_ensGene.txt')
+            protein_feature = ProteinFeature(db_fname, gene_pred_fname)
+            protein_feature.calculate_protein_feature(os.path.join(out_dir_tmp, 'snp.distance'),
+                                                      os.path.join(out_dir_tmp, 'snp.protein_feature'))
 
-        # Calculate protein structural features (disorder, secondary structure, ASA, Pfam, PTM)
-        self.logger.info('Extracting protein structural features.')
-        db_fname = os.path.join(self.db_dir, 'ensembl.db')
-        gene_pred_fname = os.path.join(self.db_dir, 'hg19_ensGene.txt')
-        protein_feature = ProteinFeature(db_fname, gene_pred_fname)
-        protein_feature.calculate_protein_feature(os.path.join(out_dir_tmp, 'snp.distance'),
-                                                  os.path.join(out_dir_tmp, 'snp.protein_feature'))
+            # Calculate junction score
+            self.logger.info('Calculating junction strength change.')
+            donor_ic_fname = os.path.join(self.db_dir, 'motif/donorsite.pssm')
+            acceptor_ic_fname = os.path.join(
+                self.db_dir, 'motif/acceptorsite.pssm')
+            junction_strength = JunctionStrength(donor_ic_fname, acceptor_ic_fname)
+            junction_strength.cal_junction_strength(ref_name, os.path.join(out_dir_tmp, 'snp.distance'),
+                                                    os.path.join(out_dir_tmp, 'snp.junc'))
 
-        # Calculate junction score
-        self.logger.info('Calculating junction strength change.')
-        donor_ic_fname = os.path.join(self.db_dir, 'motif/donorsite.pssm')
-        acceptor_ic_fname = os.path.join(
-            self.db_dir, 'motif/acceptorsite.pssm')
-        junction_strength = JunctionStrength(donor_ic_fname, acceptor_ic_fname)
-        junction_strength.cal_junction_strength(ref_name, os.path.join(out_dir_tmp, 'snp.distance'),
-                                                os.path.join(out_dir_tmp, 'snp.junc'))
+            # Calculate phylop conservation score
+            self.logger.info('Calculating conservation score.')
+            phylop_fname = os.path.join(
+                self.db_dir, 'phylop/hg19.100way.phyloP100way.bw')
+            phylop = Phylop(phylop_fname)
+            phylop.calculate(os.path.join(out_dir_tmp, 'snp.distance'),
+                            os.path.join(out_dir_tmp, 'snp.phylop'))
+            phylop.close()
 
-        # Calculate phylop conservation score
-        self.logger.info('Calculating conservation score.')
-        phylop_fname = os.path.join(
-            self.db_dir, 'phylop/hg19.100way.phyloP100way.bw')
-        phylop = Phylop(phylop_fname)
-        phylop.calculate(os.path.join(out_dir_tmp, 'snp.distance'),
-                         os.path.join(out_dir_tmp, 'snp.phylop'))
-        phylop.close()
-
-        self._merge_features()
+            self._merge_features()
+            # predictor required, return true
+            return True
+        # snp.switched doesn't exist
+        else:
+            # rename prediction.txt to snp.prediction.txt
+            os.rename(os.path.join(self.out_dir, 'prediction.txt'), os.path.join(out_dir_tmp, 'snp.prediction.txt'))
+            # rename prediction.json to snp.prediciton.json
+            os.rename(os.path.join(self.out_dir, 'prediction.json'), os.path.join(out_dir_tmp, 'snp.prediction.json'))
+            # predictor not necessary, return false
+            return False
 
     def _queryDB(self):
+        out_dir_tmp = os.path.join(self.out_dir, 'tmp')
         # create tempSwitched to rewrite snp.switched
         tempSwitched = ''
         # create output file string
         output = ''
-        # create temp json dictionary
-        out_json = ''
         # create connection to mongoDB
         client = MongoClient() # using default host+port, can specify host+port or use URI
         # get the DB
@@ -171,19 +182,19 @@ class FeatureCalculator(object):
                       output += value + '\t'
                   # remove last \t from line and replace with \n
                   output = output[:-2] + '\n'
-                  # write data as JSON
-                  out_json += json.dumps(item)
         # if tempSwitched is empty
         if (len(tempSwitched) == 0):
             # delete snp.switched
             os.remove(inFile)
         # else, overwrite snp.switched with tempSwitched
         else:
-            with open(inFile, 'w') as out_f:
-                out_f.write(tempSwitched)
-        # create file called prediction.txt in out_dir
-        # write output file string to prediction.txt
-        # write output JSON to prediciton.json
+            with open(inFile, 'w') as switched:
+                switched.write(tempSwitched)
+        # create file called prediction.txt and prediction.json in out_dir
+        outFile = os.path.join(self.out_dir, 'features.txt')
+        with open(outFile, 'w') as out_f:
+            # write output file string to prediction.txt
+            out_f.write(output)
 
     def _merge_features(self):
         self.logger.info('Merging all the features.')
@@ -211,9 +222,24 @@ class FeatureCalculator(object):
         result.to_csv(os.path.join(self.out_dir, 'snp.features.txt'),
                       sep='\t', index=False, na_rep='NA')
 
-        # TODO combine snp.prediction.txt and prediction.txt
-        # TODO combine snp.prediction.json and prediciton.json
-
+        pred = os.path.join(self.out_dir, 'features.txt')
+        features = os.path.join(self.out_dir, 'snp.features.txt')
+        # temp string to hold prediciton.txt data
+        pred_string = ''
+        # read in data of both files
+        with open(pred) as dbFile, open(features) as snpFile:
+            for line in dbFile:
+                pred_string += line
+            for line in snpFile:
+                pred_string += line
+        # write combined data to snp.features.txt
+        with open(features, 'w') as out_f:
+            out_f.write(pred_string)
+        data = csv.reader(features, delimiter='\t')
+        # sort snp.features.txt
+        data = pd.read_csv(features)
+        data.sort_index(axis=0)
+        data.to_csv(features, sep='\t', header=False, index=False)
 
 def main():
     parser = argparse.ArgumentParser(description='''

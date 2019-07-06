@@ -6,6 +6,8 @@ import os
 import os.path
 
 import pandas as pd
+import pymongo import MongoClient
+import json
 
 from utils.vcf import VCF
 from utils.seq import FlankingSeq
@@ -129,26 +131,56 @@ class FeatureCalculator(object):
         self._merge_features()
 
     def _queryDB(self):
-        # create temp string to rewrite snp.switched
+        # create tempSwitched to rewrite snp.switched
+        tempSwitched = ''
         # create output file string
+        output = ''
+        # create temp json dictionary
+        out_json = ''
+        # create connection to mongoDB
+        client = MongoClient() # using default host+port, can specify host+port or use URI
+        # get the DB
+        db = client.DB_NAME # change DB_NAME to name of DB
+        # get the collection (basically a table)
+        items = db.COLLECTION_NAME # change COLLECTION_NAME to the name of the collection
         # parse snp.switched
-            # build query using each line
-                # element 0: #chrom
-                # element 1: pos
-                # element 2: ref
-                # element 3: alt
-            # query for matching above
-            # if data not in db
-                # write line to temp string, tab delimited
-                # add new line to temp string
-                # this string will be used to rewrite snp.switched
-            # append all data to output file string, tab delimited
-            # add new line to the end of the string
-            # write data as JSON
-        # if temp string is empty
+        inFile = os.path.join(out_dir_tmp, 'snp.switched')
+        with open(inFile) as in_f:
+            for line in in_f:
+              cols = line.rstrip().split('\t')
+              # build query dictionary
+              query = {
+                  '#chrom': cols[0],
+                  'pos': cols[1],
+                  'ref': cols[2],
+                  'alt': cols[3]
+              }
+              # query for matching data
+              item = items.find_one(query)
+              # if data not in db
+              if (item == None):
+                  # write line to tempSwitched, tab delimited
+                  for element in cols:
+                      tempSwitched += element + '\t'
+                  # remove last \t from tempSwitched and replace with \n
+                  tempSwitched = tempSwitched[:-2] + '\n'
+                  # tempSwitched will be used to rewrite snp.switched
+              # else, append all data to output file string, tab delimited
+              else:
+                  for key, value in item.iteritems():
+                      output += value + '\t'
+                  # remove last \t from line and replace with \n
+                  output = output[:-2] + '\n'
+                  # write data as JSON
+                  out_json += json.dumps(item)
+        # if tempSwitched is empty
+        if (len(tempSwitched) == 0):
             # delete snp.switched
-        # else
-            # overwrite snp.switched with temp string
+            os.remove(inFile)
+        # else, overwrite snp.switched with tempSwitched
+        else:
+            with open(inFile, 'w') as out_f:
+                out_f.write(tempSwitched)
         # create file called prediction.txt in out_dir
         # write output file string to prediction.txt
         # write output JSON to prediciton.json

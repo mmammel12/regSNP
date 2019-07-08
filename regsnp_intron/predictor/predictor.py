@@ -67,8 +67,10 @@ class Predictor(object):
             records = result.loc[:, ['#chrom', 'pos', 'ref', 'alt', 'disease', 'prob', 'tpr', 'fpr', 'splicing_site', 'name', 'strand']].\
                 to_dict(orient='records')
             json.dump({"data": records}, open(ofname + '.json', 'w'))
-        else:
-            data = pd.read_csv(ifname, sep='\t', header=0)
+        # TODO else for merging DB data with calculated data
+        # this might not be necessary, might only have to catch errors
+        # else:
+        #     data = pd.read_csv(ifname, sep='\t', header=0)
 
     def _predict_on_ss(self, data):
         """

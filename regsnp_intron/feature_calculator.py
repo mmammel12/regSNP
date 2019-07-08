@@ -32,6 +32,9 @@ class FeatureCalculator(object):
         self.logger = logging.getLogger(__name__)
 
     def calculate_feature(self):
+        # return boolean
+        needPredictor = True
+
         out_dir_tmp = os.path.join(self.out_dir, 'tmp')
         os.mkdir(out_dir_tmp)
 
@@ -131,8 +134,6 @@ class FeatureCalculator(object):
             phylop.close()
 
             self._merge_features()
-            # predictor required, return true
-            return True
         # snp.switched doesn't exist
         else:
             # rename prediction.txt to snp.prediction.txt
@@ -140,7 +141,8 @@ class FeatureCalculator(object):
             # rename prediction.json to snp.prediciton.json
             os.rename(os.path.join(self.out_dir, 'prediction.json'), os.path.join(out_dir_tmp, 'snp.prediction.json'))
             # predictor not necessary, return false
-            return False
+            needPredictor = False
+        return needPredictor
 
     def _queryDB(self):
         out_dir_tmp = os.path.join(self.out_dir, 'tmp')
@@ -148,6 +150,8 @@ class FeatureCalculator(object):
         tempSwitched = ''
         # create output file string
         output = ''
+        # create temp json dictionary
+        out_json = {}
         # create connection to mongoDB
         client = MongoClient() # using default host+port, can specify host+port or use URI
         # get the DB
@@ -182,6 +186,8 @@ class FeatureCalculator(object):
                       output += value + '\t'
                   # remove last \t from line and replace with \n
                   output = output[:-2] + '\n'
+                  # write data as JSON
+                  out_json += json.dumps(item)
         # if tempSwitched is empty
         if (len(tempSwitched) == 0):
             # delete snp.switched
@@ -191,10 +197,12 @@ class FeatureCalculator(object):
             with open(inFile, 'w') as switched:
                 switched.write(tempSwitched)
         # create file called prediction.txt and prediction.json in out_dir
-        outFile = os.path.join(self.out_dir, 'features.txt')
-        with open(outFile, 'w') as out_f:
-            # write output file string to prediction.txt
+        outFile = os.path.join(self.out_dir, 'snp.prediction.txt')
+        outJSONFile = os.path.join(self.out_dir, 'snp.prediction.json')
+        with open(outFile, 'w') as out_f, open(outJSONFile) as out_json_f:
+            # write output file string to snp.prediction.txt and snp.prediction.json
             out_f.write(output)
+            out_json_f.write(out_json)
 
     def _merge_features(self):
         self.logger.info('Merging all the features.')

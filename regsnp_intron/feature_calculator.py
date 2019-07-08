@@ -221,7 +221,8 @@ class FeatureCalculator(object):
                 # else, append all data to output file string, tab delimited
                 else:
                     for key, value in item.iteritems():
-                        output += value + "\t"
+                        if key != "_id":
+                            output += value + "\t"
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
                     # write data as JSON

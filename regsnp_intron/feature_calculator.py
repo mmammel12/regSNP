@@ -183,7 +183,7 @@ class FeatureCalculator(object):
         # create temp json dictionary
         out_json = {}
         # create connection to mongoDB
-        client = MongoClient("mongodb+srv://cluster0-souoy.gcp.mongodb.net/tes")
+        client = MongoClient("mongodb+srv://cluster0-souoy.gcp.mongodb.net/test")
         # get the DB
         db = client.muriDB
         # get the collection (basically a table)

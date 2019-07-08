@@ -186,7 +186,7 @@ class FeatureCalculator(object):
         # create output file string
         output = ""
         # create temp json dictionary
-        out_json = []
+        json_string = "{'data': ["
         # create connection to mongoD serverAdminB
         client = MongoClient(
             "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
@@ -227,7 +227,8 @@ class FeatureCalculator(object):
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
                     # write data as JSON
-                    out_json.append(dumps(item))
+                    json_string += str(item) + ","
+        json_string += "] }"
         # if tempSwitched is empty
         if len(tempSwitched) == 0:
             # return true
@@ -242,9 +243,6 @@ class FeatureCalculator(object):
         with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
             # write output file string to snp.prediction.txt and snp.prediction.json
             out_f.write(output)
-            json_string = ""
-            for element in out_json:
-                json_string += json.dump(element)
             out_json_f.write(json_string)
         return needCalculate
 

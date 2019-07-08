@@ -242,8 +242,10 @@ class FeatureCalculator(object):
         with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
             # write output file string to snp.prediction.txt and snp.prediction.json
             out_f.write(output)
+            json_string = ""
             for element in out_json:
-                json.dump(element, out_json_f)
+                json_string += json.dump(element)
+            out_json_f.write(json_string)
         return needCalculate
 
     def _merge_features(self):

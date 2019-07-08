@@ -239,7 +239,7 @@ class FeatureCalculator(object):
         # create file called prediction.txt and prediction.json in out_dir
         outFile = os.path.join(self.out_dir, "snp.prediction.txt")
         outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
-        with open(outFile, "w") as out_f, open(outJSONFile) as out_json_f:
+        with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
             # write output file string to snp.prediction.txt and snp.prediction.json
             out_f.write(output)
             for element in out_json:

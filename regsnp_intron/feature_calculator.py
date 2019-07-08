@@ -8,7 +8,6 @@ import os.path
 import pandas as pd
 import pymongo
 from pymongo import MongoClient
-from bson.json_util import dumps
 import json
 import operator
 import csv

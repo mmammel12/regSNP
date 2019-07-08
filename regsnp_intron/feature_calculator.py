@@ -34,7 +34,7 @@ class FeatureCalculator(object):
 
     def calculate_feature(self):
         # return boolean
-        needPredictor = True
+        needPredictor = False
 
         out_dir_tmp = os.path.join(self.out_dir, "tmp")
         os.mkdir(out_dir_tmp)
@@ -66,10 +66,10 @@ class FeatureCalculator(object):
         )
 
         # pull data from db
-        self._queryDB()
+        needCompute = self._queryDB()
 
-        # if snp.switched exists, compute remaining data
-        if os.path.exists(os.path.join(out_dir_tmp, "snp.switched")):
+        # if self._queryDB returned true, continue with computation
+        if needCompute:
             # Annotate SNVs
             self.logger.info("Annotating SNVs with ANNOVAR.")
             annovar_path = os.path.expanduser(self.settings["annovar_path"])
@@ -175,6 +175,9 @@ class FeatureCalculator(object):
         return needPredictor
 
     def _queryDB(self):
+        # return boolean
+        needCalculate = True
+        # tmp directory path
         out_dir_tmp = os.path.join(self.out_dir, "tmp")
         # create tempSwitched to rewrite snp.switched
         tempSwitched = ""
@@ -223,8 +226,8 @@ class FeatureCalculator(object):
                     out_json += json.dumps(item)
         # if tempSwitched is empty
         if len(tempSwitched) == 0:
-            # delete snp.switched
-            os.remove(inFile)
+            # return true
+            needCalculate = False
         # else, overwrite snp.switched with tempSwitched
         else:
             with open(inFile, "w") as switched:
@@ -236,6 +239,7 @@ class FeatureCalculator(object):
             # write output file string to snp.prediction.txt and snp.prediction.json
             out_f.write(output)
             out_json_f.write(out_json)
+        return needCalculate
 
     def _merge_features(self):
         self.logger.info("Merging all the features.")

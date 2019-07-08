@@ -9,7 +9,6 @@ import pandas as pd
 import pymongo
 from pymongo import MongoClient
 import json
-from bson.json_util import dumps
 import operator
 import csv
 
@@ -228,7 +227,7 @@ class FeatureCalculator(object):
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
                     # write data as JSON
-                    json_str += eval(dumps(item)) + ","
+                    json_str += json.dumps(json.loads(item)) + ","
         json_str += " ] }"
         # if tempSwitched is empty
         if len(tempSwitched) == 0:

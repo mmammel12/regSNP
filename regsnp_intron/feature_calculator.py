@@ -187,12 +187,11 @@ class FeatureCalculator(object):
         # create temp json dictionary
         out_json = {}
         # create connection to mongoD serverAdminB
-        client = MongoClient(
-            "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test"
-            % ("serverAdmin", "s3cr3tpass")
-        )
+        client = MongoClient("mongodb+srv://cluster0-souoy.gcp.mongodb.net/test")
         # get the DB
         db = client.muriDB
+        # authenticate for DB
+        db.authenticate("serverAdmin", "s3cr3tpass")
         # get the collection (basically a table)
         items = db.muriCol
         # parse snp.switched

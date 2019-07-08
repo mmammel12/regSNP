@@ -230,6 +230,7 @@ class FeatureCalculator(object):
                     output = output[:-2] + "\n"
                     # write data as JSON
                     json_str += json.dumps(item) + ","
+                    print(json_str)
         json_str += " ] }"
         # if tempSwitched is empty
         if len(tempSwitched) == 0:

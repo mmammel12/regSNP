@@ -160,16 +160,17 @@ class FeatureCalculator(object):
             self._merge_features()
         # snp.switched doesn't exist
         else:
+            # TODO change naming in _queryDB and uncomment this
             # rename prediction.txt to snp.prediction.txt
-            os.rename(
-                os.path.join(self.out_dir, "prediction.txt"),
-                os.path.join(out_dir_tmp, "snp.prediction.txt"),
-            )
+            # os.rename(
+            #     os.path.join(self.out_dir, "prediction.txt"),
+            #     os.path.join(out_dir_tmp, "snp.prediction.txt"),
+            # )
             # rename prediction.json to snp.prediciton.json
-            os.rename(
-                os.path.join(self.out_dir, "prediction.json"),
-                os.path.join(out_dir_tmp, "snp.prediction.json"),
-            )
+            # os.rename(
+            #     os.path.join(self.out_dir, "prediction.json"),
+            #     os.path.join(out_dir_tmp, "snp.prediction.json"),
+            # )
             # predictor not necessary, return false
             needPredictor = False
         return needPredictor

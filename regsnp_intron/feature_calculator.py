@@ -187,7 +187,11 @@ class FeatureCalculator(object):
         # create temp json dictionary
         out_json = {}
         # create connection to mongoD serverAdminB
-        client = MongoClient("mongodb+srv://cluster0-souoy.gcp.mongodb.net/test")
+        client = MongoClient(
+            "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
+            username="serverAdmin",
+            password="s3cr3tpass",
+        )
         # get the DB
         db = client.muriDB
         # authenticate for DB

@@ -1,0 +1,5 @@
+{
+  "annovar_path": "/home/larsmay/Muri/annovar",
+  "annovar_db_path": "/home/larsmay/Muri/annovar/humandb",
+  "db_dir": "/home/larsmay/Muri/data/db"
+}

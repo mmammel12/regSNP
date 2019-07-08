@@ -153,11 +153,11 @@ class FeatureCalculator(object):
         # create temp json dictionary
         out_json = {}
         # create connection to mongoDB
-        client = MongoClient() # using default host+port, can specify host+port or use URI
+        client = MongoClient('mongodb+srv://cluster0-souoy.gcp.mongodb.net/tes')
         # get the DB
-        db = client.DB_NAME # change DB_NAME to name of DB
+        db = client.muriDB
         # get the collection (basically a table)
-        items = db.COLLECTION_NAME # change COLLECTION_NAME to the name of the collection
+        items = db.muriCol
         # parse snp.switched
         inFile = os.path.join(out_dir_tmp, 'snp.switched')
         with open(inFile) as in_f:

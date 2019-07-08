@@ -194,8 +194,6 @@ class FeatureCalculator(object):
         )
         # get the DB
         db = client.muriDB
-        # authenticate for DB
-        db.authenticate("serverAdmin", "s3cr3tpass")
         # get the collection (basically a table)
         items = db.muriCol
         # parse snp.switched

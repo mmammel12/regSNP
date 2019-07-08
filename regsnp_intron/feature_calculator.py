@@ -177,7 +177,8 @@ class FeatureCalculator(object):
 
     def _queryDB(self):
         # return boolean
-        needCalculate = True
+        # TODO change this to optionally allow computing
+        needCalculate = False
         # tmp directory path
         out_dir_tmp = os.path.join(self.out_dir, "tmp")
         # create tempSwitched to rewrite snp.switched

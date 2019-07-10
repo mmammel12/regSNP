@@ -186,7 +186,7 @@ class FeatureCalculator(object):
         # create output file string
         output = ""
         # create temp json dictionary
-        json_str = "{ data: [ "
+        json_str = '{ "data": ['
         # create connection to mongoD serverAdminB
         client = MongoClient(
             "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
@@ -232,7 +232,7 @@ class FeatureCalculator(object):
                     # add end to json entry
                     json_str += " }, "
         # end json_str to write to file
-        json_str += " ] }"
+        json_str += "] }"
         # if tempSwitched is empty
         if len(tempSwitched) == 0:
             # return true

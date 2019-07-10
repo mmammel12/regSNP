@@ -9,7 +9,6 @@ import pandas as pd
 import pymongo
 from pymongo import MongoClient
 import json
-import operator
 import csv
 
 from utils.vcf import VCF
@@ -186,7 +185,7 @@ class FeatureCalculator(object):
         # create output file string
         output = ""
         # create temp json dictionary
-        json_str = '{ "data": ['
+        json_str = '{"data":['
         # create connection to mongoD serverAdminB
         client = MongoClient(
             "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
@@ -221,18 +220,18 @@ class FeatureCalculator(object):
                     # tempSwitched will be used to rewrite snp.switched
                 # else, append all data to output file string, tab delimited
                 else:
-                    json_str += " {"
+                    json_str += "{"
                     for key, value in item.iteritems():
                         if key != "_id":
                             output += value + "\t"
-                            # write data as JSON
-                            json_str += ' "' + key + '": "' + value + '",'
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
-                    # add end to json entry
-                    json_str += " }, "
-        # end json_str to write to file
-        json_str += "] }"
+                    # write data as JSON
+                    json_str += json.dumps(item)
+        # end json_str
+        json_str += "]}"
+        # remove unicode artifacts
+        json_str.replace("u'", "'")
         # if tempSwitched is empty
         if len(tempSwitched) == 0:
             # return true

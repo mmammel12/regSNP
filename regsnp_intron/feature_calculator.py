@@ -221,7 +221,6 @@ class FeatureCalculator(object):
                     # tempSwitched will be used to rewrite snp.switched
                 # else, append all data to output file string, tab delimited
                 else:
-                    json_str += "{"
                     for key, value in item.iteritems():
                         if key != "_id":
                             output += value + "\t"

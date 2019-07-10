@@ -228,7 +228,7 @@ class FeatureCalculator(object):
                         if key != "_id":
                             output += value + "\t"
                             # write data as JSON
-                            json_str += ' "' + key + '": "' + value + '",'
+                            json_str += ' "' + str(key) + '": "' + str(value) + '",'
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
                     # add end to json entry

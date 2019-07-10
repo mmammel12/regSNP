@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding=utf-8
 import argparse
 import json
 import logging
@@ -10,7 +9,6 @@ import pandas as pd
 import pymongo
 from pymongo import MongoClient
 import json
-from __future__ import unicode_literals
 import operator
 import csv
 

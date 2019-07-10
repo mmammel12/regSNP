@@ -223,14 +223,17 @@ class FeatureCalculator(object):
                     # tempSwitched will be used to rewrite snp.switched
                 # else, append all data to output file string, tab delimited
                 else:
+                    json_str += " {"
                     for key, value in item.iteritems():
                         if key != "_id":
                             output += value + "\t"
+                            # write data as JSON
+                            json_str += ' "' + key + '": "' + value + '",'
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
-                    # write data as JSON
-                    json_str += json.dumps(item) + ","
-                    print(json_str)
+                    # add end to json entry
+                    json_str += " }, "
+        # end json_str to write to file
         json_str += " ] }"
         # if tempSwitched is empty
         if len(tempSwitched) == 0:
@@ -240,7 +243,7 @@ class FeatureCalculator(object):
         else:
             with open(inFile, "w") as switched:
                 switched.write(tempSwitched)
-        # create file called prediction.txt and prediction.json in out_dir
+        # create file called snp.prediction.txt and snp.prediction.json in out_dir
         outFile = os.path.join(self.out_dir, "snp.prediction.txt")
         outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
         with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:

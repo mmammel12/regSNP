@@ -225,7 +225,7 @@ class FeatureCalculator(object):
                     del item["_id"]
                     if needHeader:
                         for key in item.iteritems():
-                            output += str(key) + "\t"
+                            output += key[0] + "\t"
                         output += "\n"
                         needHeader = False
                     for key, value in item.iteritems():
@@ -252,6 +252,7 @@ class FeatureCalculator(object):
         json_str = json_str[:-1] + "]}"
         # remove unicode artifacts
         json_str.replace("u'", "'")
+        # output.replace("u'", "'")
         # if tempSwitched is empty
         if len(tempSwitched) == 0:
             # return true

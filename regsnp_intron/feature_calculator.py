@@ -244,13 +244,13 @@ class FeatureCalculator(object):
                         "fpr": item["fpr"],
                         "prob": item["prob"],
                         "name": item["name"],
-                        "strand": str(item["strand"]),
+                        "strand": item["strand"],
                     }
                     # fix strand
-                    # if simple_json["strand"] == "-0":
-                    #     simple_json["strand"] = "-"
-                    # elif simple_json["strand"] == "0":
-                    #     simple_json["strand"] = "+"
+                    if simple_json["strand"] == "-0":
+                        simple_json["strand"] = "-"
+                    elif simple_json["strand"] == "0":
+                        simple_json["strand"] = "+"
                     # write data as JSON
                     json_str += dumps(simple_json) + ","
         # end json_str

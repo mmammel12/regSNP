@@ -200,7 +200,9 @@ class FeatureCalculator(object):
         # parse snp.switched
         inFile = os.path.join(out_dir_tmp, "snp.switched")
         with open(inFile) as in_f:
-            needHeader = True
+            # create pandas dataframe
+            df = pd.DataFrame()
+            # needHeader = True
             for line in in_f:
                 cols = line.rstrip().split("\t")
                 # build query dictionary
@@ -223,15 +225,17 @@ class FeatureCalculator(object):
                 # else, append all data to output file string, tab delimited
                 else:
                     del item["_id"]
-                    if needHeader:
-                        for key in item.iteritems():
-                            output += key[0] + "\t"
-                        output += "\n"
-                        needHeader = False
-                    for key, value in item.iteritems():
-                        output += value + "\t"
-                    # remove last \t from line and replace with \n
-                    output = output[:-2] + "\n"
+                    # append item to df
+                    df.append(list(item))
+                    # if needHeader:
+                    #     for key in item.iteritems():
+                    #         output += key[0] + "\t"
+                    #     output += "\n"
+                    #     needHeader = False
+                    # for key, value in item.iteritems():
+                    #     output += value + "\t"
+                    # # remove last \t from line and replace with \n
+                    # output = output[:-2] + "\n"
                     # make new dict with only #chrom, pos, alt, ref, disease, splicing_site, tpr, fpr, prob, name, strand
                     simple_json = {
                         "#chrom": item["#chrom"],
@@ -246,13 +250,27 @@ class FeatureCalculator(object):
                         "name": item["name"],
                         "strand": item["strand"],
                     }
-                    # fix strand
+                    # fix strand type conversion issue
                     if simple_json["strand"] == "-0":
                         simple_json["strand"] = "-"
                     elif simple_json["strand"] == "0":
                         simple_json["strand"] = "+"
                     # write data as JSON
                     json_str += dumps(simple_json) + ","
+        # sort df
+        df.sort_values(
+            [
+                "#chrom",
+                "pos",
+                "ref",
+                "alt",
+                "disease",
+                "prob",
+                "tpr",
+                "fpr",
+                "splicing_site",
+            ]
+        )
         # end json_str
         json_str = json_str[:-1] + "]}"
         # remove unicode artifacts
@@ -268,9 +286,10 @@ class FeatureCalculator(object):
         # create file called snp.prediction.txt and snp.prediction.json in out_dir
         outFile = os.path.join(self.out_dir, "snp.prediction.txt")
         outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
-        with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
-            # write output file string to snp.prediction.txt and snp.prediction.json
-            out_f.write(output)
+        # write snp.prediction.txt
+        df.to_csv(outFile, "\t", header=True)
+        # write snp.prediction.json
+        with open(outJSONFile, "w") as out_json_f:
             out_json_f.write(json_str)
         return needCalculate
 

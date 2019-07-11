@@ -226,11 +226,20 @@ class FeatureCalculator(object):
                         output += value + "\t"
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
-                    # delete unnecessary keys for json
-                    del item["name"]
-                    del item["strand"]
+                    # make new dict with only #chrom, pos, alt, ref, disease, splicing_site, tpr, fpr, prob
+                    simple_json = {
+                        "#chrom": item["#chrom"],
+                        "pos": item["pos"],
+                        "alt": item["alt"],
+                        "ref": item["ref"],
+                        "disease": item["disease"],
+                        "splicing_site": item["splicing_site"],
+                        "tpr": item["tpr"],
+                        "fpr": item["fpr"],
+                        "prob": item["prob"],
+                    }
                     # write data as JSON
-                    json_str += dumps(item) + ","
+                    json_str += dumps(simple_json) + ","
         # end json_str
         json_str = json_str[:-1] + "]}"
         # remove unicode artifacts

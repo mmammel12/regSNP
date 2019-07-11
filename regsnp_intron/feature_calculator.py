@@ -225,7 +225,7 @@ class FeatureCalculator(object):
                     del item["_id"]
                     if needHeader:
                         for key in item.iteritems():
-                            output += key + "\t"
+                            output += str(key) + "\t"
                         output += "\n"
                         needHeader = False
                     for key, value in item.iteritems():

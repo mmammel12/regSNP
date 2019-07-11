@@ -200,6 +200,7 @@ class FeatureCalculator(object):
         # parse snp.switched
         inFile = os.path.join(out_dir_tmp, "snp.switched")
         with open(inFile) as in_f:
+            needHeader = True
             for line in in_f:
                 cols = line.rstrip().split("\t")
                 # build query dictionary
@@ -222,6 +223,11 @@ class FeatureCalculator(object):
                 # else, append all data to output file string, tab delimited
                 else:
                     del item["_id"]
+                    if needHeader:
+                        for key in item.iteritems():
+                            output += key + "\t"
+                        output += "\n"
+                        needHeader = False
                     for key, value in item.iteritems():
                         output += value + "\t"
                     # remove last \t from line and replace with \n

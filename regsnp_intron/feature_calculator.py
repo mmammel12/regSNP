@@ -258,19 +258,21 @@ class FeatureCalculator(object):
                     # write data as JSON
                     json_str += dumps(simple_json) + ","
         # sort df
-        df.sort_values(
-            [
-                "#chrom",
-                "pos",
-                "ref",
-                "alt",
-                "disease",
-                "prob",
-                "tpr",
-                "fpr",
-                "splicing_site",
-            ]
-        )
+        # df.columns = df.columns.str.strip()
+        # df.sort_values(
+        #     [
+        #         "#chrom",
+        #         "pos",
+        #         "ref",
+        #         "alt",
+        #         "disease",
+        #         "prob",
+        #         "tpr",
+        #         "fpr",
+        #         "splicing_site",
+        #     ],
+        #     inplace=True,
+        # )
         # end json_str
         json_str = json_str[:-1] + "]}"
         # remove unicode artifacts

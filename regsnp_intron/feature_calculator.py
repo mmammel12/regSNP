@@ -225,7 +225,7 @@ class FeatureCalculator(object):
                 # else, append all data to output file string, tab delimited
                 else:
                     del item["_id"]
-                    itemList = list(item)
+                    itemList = [x for x in item.values()]
                     resultsList.append(itemList)
                     startHeaders = [
                         "#chrom",

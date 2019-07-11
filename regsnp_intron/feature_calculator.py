@@ -226,7 +226,7 @@ class FeatureCalculator(object):
                         output += value + "\t"
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
-                    # make new dict with only #chrom, pos, alt, ref, disease, splicing_site, tpr, fpr, prob
+                    # make new dict with only #chrom, pos, alt, ref, disease, splicing_site, tpr, fpr, prob, name, strand
                     simple_json = {
                         "#chrom": item["#chrom"],
                         "pos": item["pos"],
@@ -237,6 +237,8 @@ class FeatureCalculator(object):
                         "tpr": item["tpr"],
                         "fpr": item["fpr"],
                         "prob": item["prob"],
+                        "name": item["name"],
+                        "strand": item["strand"],
                     }
                     # write data as JSON
                     json_str += dumps(simple_json) + ","

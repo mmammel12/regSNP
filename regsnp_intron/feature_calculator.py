@@ -244,15 +244,19 @@ class FeatureCalculator(object):
                         "fpr": item["fpr"],
                         "prob": item["prob"],
                         "name": item["name"],
-                        "strand": item["strand"],
+                        "strand": str(item["strand"]),
                     }
+                    # fix strand
+                    # if simple_json["strand"] == "-0":
+                    #     simple_json["strand"] = "-"
+                    # elif simple_json["strand"] == "0":
+                    #     simple_json["strand"] = "+"
                     # write data as JSON
                     json_str += dumps(simple_json) + ","
         # end json_str
         json_str = json_str[:-1] + "]}"
         # remove unicode artifacts
         json_str.replace("u'", "'")
-        # output.replace("u'", "'")
         # if tempSwitched is empty
         if len(tempSwitched) == 0:
             # return true

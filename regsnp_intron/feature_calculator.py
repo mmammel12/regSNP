@@ -226,6 +226,9 @@ class FeatureCalculator(object):
                         output += value + "\t"
                     # remove last \t from line and replace with \n
                     output = output[:-2] + "\n"
+                    # delete unnecessary keys for json
+                    del item["name"]
+                    del item["strand"]
                     # write data as JSON
                     json_str += dumps(item) + ","
         # end json_str

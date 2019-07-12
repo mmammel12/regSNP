@@ -9,6 +9,7 @@ import pandas as pd
 import pymongo
 from pymongo import MongoClient
 import json
+import operator
 from bson.json_util import dumps
 import csv
 
@@ -183,8 +184,8 @@ class FeatureCalculator(object):
         out_dir_tmp = os.path.join(self.out_dir, "tmp")
         # create tempSwitched to rewrite snp.switched
         tempSwitched = ""
-        # create output file string
-        output = ""
+        # create headers string
+        headers = ""
         # create temp json dictionary
         json_str = '{"data":['
         # create connection to mongoD serverAdminB
@@ -224,41 +225,18 @@ class FeatureCalculator(object):
                     # tempSwitched will be used to rewrite snp.switched
                 # else, append all data to output file string, tab delimited
                 else:
+                    # delete _id, it is not needed
                     del item["_id"]
-                    itemList = [x for x in item.values()]
-                    resultsList.append(itemList)
-                    startHeaders = [
-                        "#chrom",
-                        "pos",
-                        "ref",
-                        "alt",
-                        "disease",
-                        "prob",
-                        "tpr",
-                        "fpr",
-                        "splicing_site",
-                    ]
 
                     # write header if needed
                     if needHeader:
-                        for header in startHeaders:
-                            output += header + "\t"
-                        for key in item.iteritems():
-                            if key[0] not in startHeaders:
-                                output += key[0] + "\t"
-                        # remove last \t and replace with \n
-                        output += output[:-2] + "\n"
+                        headerList = [x for x in item.keys()]
+                        resultsList.append(headerList)
                         needHeader = False
+                    itemList = [x for x in item.values()]
+                    resultsList.append(itemList)
 
-                    # write values
-                    for header in startHeaders:
-                        output += item[header] + "\t"
-                    for key, value in item.iteritems():
-                        if key not in startHeaders:
-                            output += value + "\t"
-                    # remove last \t and replace with \n
-                    output = output[:-2] + "\n"
-                    # make new dict with only #chrom, pos, alt, ref, disease, splicing_site, tpr, fpr, prob, name, strand
+                    # create dict with only necessary data for json
                     simple_json = {
                         "#chrom": item["#chrom"],
                         "pos": item["pos"],
@@ -294,12 +272,59 @@ class FeatureCalculator(object):
         # create file called snp.prediction.txt and snp.prediction.json in out_dir
         outFile = os.path.join(self.out_dir, "snp.prediction.txt")
         outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
+
+        # create list of indices
+        indices = []
+        # sort resultsList by splicing_site
+        ssIndex = resultsList[0].index("splicing_site")
+        indices.append(ssIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[ssIndex])
+        # sore resultsList by fpr
+        fprIndex = resultsList[0].index("fpr")
+        indices.append(fprIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
+        # sore resultsList by tpr
+        tprIndex = resultsList[0].index("tpr")
+        indices.append(tprIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[tprIndex])
+        # sore resultsList by prob
+        probIndex = resultsList[0].index("prob")
+        indices.append(probIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[probIndex])
+        # sore resultsList by disease
+        diseaseIndex = resultsList[0].index("disease")
+        indices.append(diseaseIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[diseaseIndex])
+        # sore resultsList by alt
+        altIndex = resultsList[0].index("alt")
+        indices.append(altIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[altIndex])
+        # sore resultsList by ref
+        refIndex = resultsList[0].index("ref")
+        indices.append(refIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[refIndex])
+        # sore resultsList by pos
+        posIndex = resultsList[0].index("pos")
+        indices.append(posIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[posIndex])
+        # sore resultsList by #chrom
+        chromIndex = resultsList[0].index("#chrom")
+        indices.append(chromIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[chromIndex])
+
+        for i in reversed(indices):
+            headers += resultsList[0][i]
+        for i, value in enumerate(resultsList[0]):
+            if i not in indices:
+                headers += value
+
         with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
             # write output file string to snp.prediction.txt and snp.prediction.json
-            # out_f.write(output)
+            out_f.write(headers)
             for i in resultsList:
                 for j in i:
-                    out_f.write(j + "\t")
+                    if j not in indices:
+                        out_f.write(j + "\t")
                 out_f.write("\n")
             out_json_f.write(json_str)
         return needCalculate

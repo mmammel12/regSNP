@@ -278,11 +278,11 @@ class FeatureCalculator(object):
         # sore resultsList by strand
         strandIndex = resultsList[0].index("strand")
         indices.append(strandIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[strandIndex])
         # sore resultsList by name
         nameIndex = resultsList[0].index("name")
         indices.append(nameIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[nameIndex])
         # sort resultsList by splicing_site
         ssIndex = resultsList[0].index("splicing_site")
         indices.append(ssIndex)

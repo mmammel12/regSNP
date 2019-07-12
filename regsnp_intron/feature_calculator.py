@@ -344,7 +344,7 @@ class FeatureCalculator(object):
             out_f.write(headers)
             for i in resultsList[1:]:
                 for j in order:
-                    out_f.write(j + "\t")
+                    out_f.write(resultsList[i][j] + "\t")
                 out_f.write("\n")
             out_json_f.write(json_str)
         return needCalculate

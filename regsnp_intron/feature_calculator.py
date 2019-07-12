@@ -344,7 +344,14 @@ class FeatureCalculator(object):
             out_f.write(headers)
             for i in resultsList[1:]:
                 for j in order:
-                    out_f.write(i[j] + "\t")
+                    # fix strand type conversion
+                    if j != strandIndex:
+                        out_f.write(i[j] + "\t")
+                    else:
+                        if i[j] == "-0":
+                            out_f.write("-\t")
+                        elif i[j] == "0":
+                            out_f.write("+\t")
                 out_f.write("\n")
             out_json_f.write(json_str)
         return needCalculate

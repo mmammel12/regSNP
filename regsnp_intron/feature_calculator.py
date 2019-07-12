@@ -320,19 +320,30 @@ class FeatureCalculator(object):
         indices.append(chromIndex)
         resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[chromIndex])
 
+        # create indice order
+        order = []
         for i in reversed(indices):
+            # add index to order
+            order.append(i)
+            # add header string to headers
             headers += resultsList[0][i] + "\t"
+        # add the rest of the headers after the sorted ones
         for i, value in enumerate(resultsList[0]):
             if i not in indices:
                 headers += value + "\t"
         # remove final \t and replace with \n
         headers = headers[:-2] + "\n"
 
+        # add the rest of the indices to order
+        for i in range(len(resultsList[0])):
+            if i not in order:
+                order.append(i)
+
         with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
             # write output file string to snp.prediction.txt and snp.prediction.json
             out_f.write(headers)
             for i in resultsList[1:]:
-                for j in i:
+                for j in order:
                     out_f.write(j + "\t")
                 out_f.write("\n")
             out_json_f.write(json_str)

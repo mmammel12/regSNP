@@ -275,6 +275,14 @@ class FeatureCalculator(object):
 
         # create list of indices
         indices = []
+        # sore resultsList by strand
+        strandIndex = resultsList[0].index("strand")
+        indices.append(strandIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
+        # sore resultsList by name
+        nameIndex = resultsList[0].index("name")
+        indices.append(nameIndex)
+        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
         # sort resultsList by splicing_site
         ssIndex = resultsList[0].index("splicing_site")
         indices.append(ssIndex)

@@ -313,10 +313,12 @@ class FeatureCalculator(object):
         resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[chromIndex])
 
         for i in reversed(indices):
-            headers += resultsList[0][i]
+            headers += resultsList[0][i] + "\t"
         for i, value in enumerate(resultsList[0]):
             if i not in indices:
-                headers += value
+                headers += value + "\t"
+        # remove final \t and replace with \n
+        headers = headers[:-2] + "\n"
 
         with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
             # write output file string to snp.prediction.txt and snp.prediction.json

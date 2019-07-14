@@ -10,6 +10,7 @@ import pymongo
 from pymongo import MongoClient
 import json
 import operator
+import datetime
 from bson.json_util import dumps
 import csv
 
@@ -215,10 +216,12 @@ class FeatureCalculator(object):
                     "ref": cols[2],
                     "alt": cols[3],
                 }
-                # add query to queries collection
-                queries.insert(query)
                 # query for matching data
                 item = items.find_one(query)
+                # add current date to query
+                query["date"] = datetime.datetime.utcnow()
+                # add query to queries collection
+                queries.insert(query)
                 # if data not in db
                 if item == None:
                     # write line to tempSwitched, tab delimited

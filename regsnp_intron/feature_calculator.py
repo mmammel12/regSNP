@@ -59,7 +59,7 @@ class FeatureCalculator(object):
                     # change delimiter to '\t'
                     reader = csv.reader(in_f, delimiter=delim.delimiter)
                     fixed_file = os.path.join(self.out_dir, "snp_fixed_input.txt")
-                    with open(fixed_file) as out_f:
+                    with open(fixed_file, "w") as out_f:
                         writer = csv.writer(out_f, delimiter="\t")
                         writer.writerows(reader)
                         # set fixed_file to self.ifname

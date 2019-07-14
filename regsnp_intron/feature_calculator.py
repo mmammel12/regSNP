@@ -48,6 +48,23 @@ class FeatureCalculator(object):
             vcf_input.convert_to_txt(txt_input)
             self.ifname = txt_input
 
+        # change delimiter to '\t' if necessary
+        if self.iformat == "txt" or self.iformat == "csv":
+            # determine delimiter
+            with open(self.ifname) as in_f:
+                delim = csv.Sniffer().sniff(in_f.read(1024))
+                in_f.seek(0)
+                # if delimiter is not '\t'
+                if delim.delimiter != "\t":
+                    # change delimiter to '\t'
+                    reader = csv.reader(in_f, delimiter=delim.delimiter)
+                    fixed_file = os.path.join(self.out_dir, "snp_fixed_input.txt")
+                    with open(fixed_file) as out_f:
+                        writer = csv.writer(out_f, delimiter="\t")
+                        writer.writerows(reader)
+                        # set fixed_file to self.ifname
+                        self.ifname = fixed_file
+
         # Check input format
         self.logger.info("Checking input file format.")
         snp = SNP(self.ifname)

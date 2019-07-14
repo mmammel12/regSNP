@@ -198,6 +198,8 @@ class FeatureCalculator(object):
         db = client.muriDB
         # get the collection
         items = db.muriCol
+        # get the queries collection
+        queries = db.queries
         # create list to hold each query result
         resultsList = []
         # parse snp.switched
@@ -213,6 +215,8 @@ class FeatureCalculator(object):
                     "ref": cols[2],
                     "alt": cols[3],
                 }
+                # add query to queries collection
+                queries.insert(query)
                 # query for matching data
                 item = items.find_one(query)
                 # if data not in db

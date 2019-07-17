@@ -70,6 +70,7 @@ def main():
         feature_calculator = FeatureCalculator(
             settings, args.ifname, args.out_dir, args.iformat
         )
+        feature_calculator.calculate_feature()
         # db_dir = os.path.expanduser(settings["db_dir"])
         # predictor = Predictor(
         #     os.path.join(db_dir, "model", "on_ss_imp.pkl"),

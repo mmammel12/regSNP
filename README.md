@@ -25,7 +25,7 @@ pip install regSNP-DB
 
 ```bash
 git clone https://github.com/mmammel12/regSNP.git
-cd regsnp_intron
+cd regSNP_DB
 python setup.py install
 ```
 

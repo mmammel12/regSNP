@@ -15,12 +15,32 @@ The following Python libraries are also required. They will be automatically ins
 
 ## Installation
 
-To install, you need to install all the required Python libraries first. Then, use the following command:
+1. To install, you need to install all the required Python libraries first:
+
+```bash
+pip install pandas==0.17.1
+pip install pysam==0.15.2
+pip install pymongo
+```
+
+2. Then run the following commands to clone the repository and install the program.
 
 ```bash
 git clone https://github.com/mmammel12/regSNP.git
-cd regSNP_DB
+cd regSNP
 python setup.py install
+```
+
+If you run into:
+
+```
+error: can't create or remove files in install directory
+```
+
+Try using:
+
+```bash
+sudo python setup.py install
 ```
 
 ## Configuration

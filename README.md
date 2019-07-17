@@ -81,15 +81,4 @@ disease: Categorical prediction.
 prob: Disease-causing probability [D, PD, B]. Higher score indicates higher probability of being pathologic.
 splicing_site: Indicates on/off splicing site. Splicing sites are defined as +7bp from donor site and -13bp from acceptor site.
 features: The rest of columns contain all the genomic and protein structural features around each iSNV.
-.
-.
-.
-```
-
-## Citation
-
-Please cite:
-
-```
-To be added
 ```

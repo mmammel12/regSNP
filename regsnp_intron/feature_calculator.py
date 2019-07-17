@@ -56,8 +56,6 @@ class FeatureCalculator(object):
         self.logger.info("Checking input file format.")
         snp = SNP(self.ifname)
         ref_name = os.path.join(self.db_dir, "hg19/hg19.fa")
-        # if not snp.is_valid(ref_name):
-        #     raise RuntimeError("Invalid input file format.")
 
         # Sort input
         self.logger.info("Sorting input file.")
@@ -117,11 +115,10 @@ class FeatureCalculator(object):
                 queries.insert(query)
                 # if data not in db
                 if item == None:
-                    self.logger.info(
-                        "<invalid>Error: {0} {1} {2} {3} is not a valid combination</invalid>".format(
-                            cols[0], cols[1], cols[2], cols[3]
-                        )
+                    errorMessage = "<invalid>Error: {0} {1} {2} {3} is not a valid combination. Line will not be included in results</invalid>".format(
+                        cols[0], cols[1], cols[2], cols[3]
                     )
+                    self.logger.info(errorMessage)
                 # else, append all data to output file string, tab delimited
                 else:
                     # delete _id, it is not needed

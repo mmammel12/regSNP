@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="regSNP_DB",
+    name="regSNP-DB",
     version="0.2.0",
     packages=["regsnp_intron", "regsnp_intron.utils"],
     scripts=["bin/regsnp_intron"],

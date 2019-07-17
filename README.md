@@ -18,7 +18,7 @@ The following Python libraries are also required. They will be automatically ins
 1. The easiest way is to install with pip (recommended). This will also install all the required Python libraries:
 
 ```bash
-pip install regSNP
+pip install regSNP-DB
 ```
 
 2. To manually install, you need to install all the required Python libraries first. Then, use the following command:

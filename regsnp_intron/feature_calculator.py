@@ -115,7 +115,7 @@ class FeatureCalculator(object):
                 queries.insert(query)
                 # if data not in db
                 if item == None:
-                    errorMessage = "<invalid>Error: {0} {1} {2} {3} is not a valid combination. Line will not be included in results</invalid>".format(
+                    errorMessage = "<div class='invalid'>Error: {0} {1} {2} {3} is not a valid combination. Line will not be included in results</div>".format(
                         cols[0], cols[1], cols[2], cols[3]
                     )
                     self.logger.info(errorMessage)

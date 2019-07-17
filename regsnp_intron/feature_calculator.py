@@ -18,7 +18,9 @@ from utils.snp import SNP
 class FeatureCalculator(object):
     def __init__(self, settings, ifname, out_dir, iformat="txt"):
         self.settings = settings
-        self.db_dir = os.path.expanduser(settings["db_dir"])
+        self.db_URI = os.path.expanduser(settings["dbURI"])
+        self.db_user = os.path.expanduser(settings["dbUsername"])
+        self.db_pass = os.path.expanduser(settings["dbPassword"])
         self.ifname = os.path.expanduser(ifname)
         self.out_dir = os.path.expanduser(out_dir)
         self.iformat = iformat  # input format: txt or vcf
@@ -84,9 +86,7 @@ class FeatureCalculator(object):
         invalid_str = ""
         # create connection to mongoD serverAdminB
         client = pymongo.MongoClient(
-            "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
-            username="serverAdmin",
-            password="s3cr3tpass",
+            self.db_URI, username=self.db_user, password=self.db_pass
         )  # CHANGE THIS TO MONGO URI AND LOGIN CREDENTIALS
         # get the DB
         db = client.muriDB

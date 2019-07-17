@@ -3,8 +3,11 @@ try:
 except ImportError:
     from distutils.core import setup
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
-    name="regsnp_intron",
+    name="regSNP",
     version="0.2.0",
     packages=["regsnp_intron", "regsnp_intron.utils"],
     scripts=["bin/regsnp_intron"],
@@ -16,9 +19,11 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
-    url="https://github.com/linhai86/regsnp_intron",
+    url="https://github.com/mmammel12/regSNP",
     license="MIT",
-    author="linhai",
-    author_email="linhai@iupui.edu",
+    author=["linhai", "mamammel"],
+    author_email=["linhai@iupui.edu", "mamammel@iu.edu"],
     description="Predict disease-causing probability of human intronic SNVs.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
 )

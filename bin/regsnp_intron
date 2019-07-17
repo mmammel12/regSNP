@@ -70,19 +70,19 @@ def main():
         feature_calculator = FeatureCalculator(
             settings, args.ifname, args.out_dir, args.iformat
         )
-        db_dir = os.path.expanduser(settings["db_dir"])
-        predictor = Predictor(
-            os.path.join(db_dir, "model", "on_ss_imp.pkl"),
-            os.path.join(db_dir, "model", "off_ss_imp.pkl"),
-            os.path.join(db_dir, "model", "on_ss_clf.pkl"),
-            os.path.join(db_dir, "model", "off_ss_clf.pkl"),
-            os.path.join(db_dir, "model", "on_ss_fpr_tpr.txt"),
-            os.path.join(db_dir, "model", "off_ss_fpr_tpr.txt"),
-        )
-        predictor.predict(
-            os.path.join(args.out_dir, "snp.features.txt"),
-            os.path.join(args.out_dir, "snp.prediction"),
-        )
+        # db_dir = os.path.expanduser(settings["db_dir"])
+        # predictor = Predictor(
+        #     os.path.join(db_dir, "model", "on_ss_imp.pkl"),
+        #     os.path.join(db_dir, "model", "off_ss_imp.pkl"),
+        #     os.path.join(db_dir, "model", "on_ss_clf.pkl"),
+        #     os.path.join(db_dir, "model", "off_ss_clf.pkl"),
+        #     os.path.join(db_dir, "model", "on_ss_fpr_tpr.txt"),
+        #     os.path.join(db_dir, "model", "off_ss_fpr_tpr.txt"),
+        # )
+        # predictor.predict(
+        #     os.path.join(args.out_dir, "snp.features.txt"),
+        #     os.path.join(args.out_dir, "snp.prediction"),
+        # )
     except RuntimeError:
         shutil.rmtree(out_dir, ignore_errors=True)
 

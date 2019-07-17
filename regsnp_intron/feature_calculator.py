@@ -5,11 +5,8 @@ import logging
 import os
 import os.path
 
-import pandas as pd
 import pymongo
-from pymongo import MongoClient
 import json
-import operator
 import datetime
 from bson.json_util import dumps
 import csv
@@ -85,7 +82,7 @@ class FeatureCalculator(object):
         # create temp json dictionary
         json_str = '{"data":['
         # create connection to mongoD serverAdminB
-        client = MongoClient(
+        client = pymongo.MongoClient(
             "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
             username="serverAdmin",
             password="s3cr3tpass",

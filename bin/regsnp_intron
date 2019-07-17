@@ -70,7 +70,6 @@ def main():
         feature_calculator = FeatureCalculator(
             settings, args.ifname, args.out_dir, args.iformat
         )
-        predict = feature_calculator.calculate_feature()
         db_dir = os.path.expanduser(settings["db_dir"])
         predictor = Predictor(
             os.path.join(db_dir, "model", "on_ss_imp.pkl"),
@@ -80,18 +79,10 @@ def main():
             os.path.join(db_dir, "model", "on_ss_fpr_tpr.txt"),
             os.path.join(db_dir, "model", "off_ss_fpr_tpr.txt"),
         )
-        if predict:
-            predictor.predict(
-                os.path.join(args.out_dir, "snp.features.txt"),
-                os.path.join(args.out_dir, "snp.prediction"),
-            )
-        # TODO uncomment and fix in predictor.py
-        # else:
-        #     predictor.predict(
-        #         os.path.join(args.out_dir, "features.txt"),
-        #         os.path.join(args.out_dir, "snp.prediction"),
-        #         skip=True,
-        #     )
+        predictor.predict(
+            os.path.join(args.out_dir, "snp.features.txt"),
+            os.path.join(args.out_dir, "snp.prediction"),
+        )
     except RuntimeError:
         shutil.rmtree(out_dir, ignore_errors=True)
 

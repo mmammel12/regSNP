@@ -6,9 +6,9 @@ except ImportError:
 setup(
     name="regsnp_intron",
     version="0.2.0",
-    packages=["regsnp_intron", "regsnp_intron.utils", "regsnp_intron.predictor"],
+    packages=["regsnp_intron", "regsnp_intron.utils"],
     scripts=["bin/regsnp_intron"],
-    install_requires=["numpy", "scipy", "pandas", "sklearn", "pysam", "pymongo"],
+    install_requires=["pandas", "pysam", "pymongo"],
     include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",

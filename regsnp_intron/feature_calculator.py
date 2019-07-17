@@ -75,6 +75,7 @@ class FeatureCalculator(object):
         self._queryDB()
 
     def _queryDB(self):
+        self.logger.info("Querying database")
         # tmp directory path
         out_dir_tmp = os.path.join(self.out_dir, "tmp")
         # create headers string

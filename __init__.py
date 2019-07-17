@@ -1,1 +1,1 @@
-name = "regSNP"
+name = "regSNP_DB"

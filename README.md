@@ -4,20 +4,8 @@ regsnp-intron predicts the disease-causing probability of intronic single nucleo
 
 ## Prerequisites
 
-**ANNOVAR (>= 2016Feb01):**
-Follow the instructions at <http://annovar.openbioinformatics.org/en/latest> to install, and prepare Ensembl gene annotation.
-
-```bash
-tar -xf annovar.latest.tar.gz
-cd annovar
-perl annotate_variation.pl -downdb -buildver hg19 -webfrom annovar ensGene humandb/
-```
-
-**BEDTools (>= 2.25.0):**
-Follow the instructions at <http://bedtools.readthedocs.io/en/latest> install, and make sure the programs are in your PATH.
-
 **Python (>= 2.7.11):**
-Installing libraries such as Numpy and Scipy can be a little difficult for inexperienced users. We highly recommend installing [Anaconda](https://docs.continuum.io/anaconda). Anaconda conveniently installs Python and other commonly used packages for scientific computing and data science. (Python 3 is not currently supported.)
+(Python 3 is not currently supported.)
 
 The following Python libraries are also required. They will be automatically installed if you use pip (see [Installation](#Installation)).
 

@@ -11,7 +11,7 @@ setup(
     version="0.2.0",
     packages=["regsnp_intron", "regsnp_intron.utils"],
     scripts=["bin/regsnp_intron"],
-    install_requires=["pandas", "pysam", "pymongo"],
+    install_requires=["pandas==0.17.1", "pysam==0.15.2", "pymongo"],
     include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",

@@ -80,6 +80,8 @@ class FeatureCalculator(object):
         headers = ""
         # create temp json dictionary
         json_str = '{"data":['
+        # create string to hold invalid lines
+        invalid_str = ""
         # create connection to mongoD serverAdminB
         client = pymongo.MongoClient(
             "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
@@ -115,10 +117,15 @@ class FeatureCalculator(object):
                 queries.insert(query)
                 # if data not in db
                 if item == None:
+                    # line isn't valid, write to error log with css
                     errorMessage = "<div class='invalid'>Error: {0} {1} {2} {3} is not a valid combination. Line will not be included in results</div>".format(
                         cols[0], cols[1], cols[2], cols[3]
                     )
                     self.logger.info(errorMessage)
+                    # write invalid data to invalid_str
+                    invalid_str += "{0} {1} {2} {3}\n".format(
+                        cols[0], cols[1], cols[2], cols[3]
+                    )
                 # else, append all data to output file string, tab delimited
                 else:
                     # delete _id, it is not needed
@@ -157,9 +164,10 @@ class FeatureCalculator(object):
         json_str = json_str[:-1] + "]}"
         # remove unicode artifacts
         json_str.replace("u'", "'")
-        # create file called snp.prediction.txt and snp.prediction.json in out_dir
+        # create file called snp.prediction.txt and snp.prediction.json and invalid.txt in out_dir
         outFile = os.path.join(self.out_dir, "snp.prediction.txt")
         outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
+        invalidFile = os.path.join(self.out_dir, "invalid.txt")
 
         # create list of indices
         indices = []
@@ -227,8 +235,13 @@ class FeatureCalculator(object):
             if i not in order:
                 order.append(i)
 
+        if len(invalid_str) > 0:
+            # invalid lines exits, write to file
+            with open(invalidFile, "w") as invalid_f:
+                invalid_f.write(invalid_str)
+
         with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
-            # write output file string to snp.prediction.txt and snp.prediction.json
+            # write output file strings to snp.prediction.txt, snp.prediction.json
             out_f.write(headers)
             for i in resultsList[1:]:
                 for j in order:

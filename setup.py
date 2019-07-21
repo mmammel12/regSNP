@@ -1,15 +1,12 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+import setuptools
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name="regsnp",
-    version="0.2.5.6",
-    packages=["regsnp_intron", "regsnp_intron.utils"],
+    version="0.2.5.7",
+    packages=setuptools.find_packages(),
     scripts=["regsnp_intron.py"],
     install_requires=["pandas==0.17.1", "pysam==0.15.2", "pymongo"],
     include_package_data=True,

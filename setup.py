@@ -7,8 +7,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="regSNP-DB",
-    version="0.2.3",
+    name="regsnp",
+    version="0.2.4",
     packages=["regsnp_intron", "regsnp_intron.utils"],
     scripts=["bin/regsnp_intron"],
     install_requires=["pandas==0.17.1", "pysam==0.15.2", "pymongo"],

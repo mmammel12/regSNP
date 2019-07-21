@@ -6,13 +6,7 @@ import os.path
 import shutil
 import sys
 
-try:
-    from regsnp_intron.feature_calculator import FeatureCalculator
-except ImportError:
-    sys.path.append(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), "regsnp_intron")
-    )
-    from feature_calculator import FeatureCalculator
+from feature_calculator import FeatureCalculator
 
 
 def main():

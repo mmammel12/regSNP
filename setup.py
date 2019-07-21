@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="regsnp",
-    version="0.2.5.1",
+    version="0.2.5.2",
     packages=["regsnp_intron", "regsnp_intron.utils"],
     scripts=["regsnp_intron.py"],
     install_requires=["pandas==0.17.1", "pysam==0.15.2", "pymongo"],

@@ -169,17 +169,17 @@ class FeatureCalculator(object):
                         simple_json["strand"] = "+"
                     # write data as JSON
                     json_str += dumps(simple_json) + ","
-        # end json_str
-        json_str = json_str[:-1] + "]}"
-        # remove unicode artifacts
-        json_str.replace("u'", "'")
-        # create file called snp.prediction.txt and snp.prediction.json and invalid.txt in out_dir
-        outFile = os.path.join(self.out_dir, "snp.prediction.txt")
-        outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
-        invalidFile = os.path.join(self.out_dir, "invalid.txt")
-
         # if there is valid output
         if errorLines < lines:
+            # end json_str
+            json_str = json_str[:-1] + "]}"
+            # remove unicode artifacts
+            json_str.replace("u'", "'")
+            # create file called snp.prediction.txt and snp.prediction.json and invalid.txt in out_dir
+            outFile = os.path.join(self.out_dir, "snp.prediction.txt")
+            outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
+            invalidFile = os.path.join(self.out_dir, "invalid.txt")
+
             # create list of indices
             indices = []
             # sore resultsList by strand

@@ -10,7 +10,7 @@ setup(
     name="regsnp",
     version="0.2.5.3",
     packages=["regsnp_intron", "regsnp_intron.utils"],
-    scripts=["regsnp_intron.py"],
+    scripts=["regsnp_intron/regsnp_intron.py"],
     install_requires=["pandas==0.17.1", "pysam==0.15.2", "pymongo"],
     include_package_data=True,
     classifiers=[

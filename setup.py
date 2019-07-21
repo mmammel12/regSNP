@@ -3,9 +3,9 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-setup(
+setuptools.setup(
     name="regsnp",
-    version="0.2.5.7",
+    version="0.2.5.8",
     packages=setuptools.find_packages(),
     scripts=["regsnp_intron.py"],
     install_requires=["pandas==0.17.1", "pysam==0.15.2", "pymongo"],

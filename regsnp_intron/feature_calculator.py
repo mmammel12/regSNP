@@ -171,6 +171,7 @@ class FeatureCalculator(object):
                     json_str += dumps(simple_json) + ","
         # if there is valid output
         if errorLines < lines:
+            self.logger.info("lines: " + lines + "\nError lines: " + errorLines)
             # end json_str
             json_str = json_str[:-1] + "]}"
             # remove unicode artifacts

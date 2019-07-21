@@ -96,11 +96,17 @@ class FeatureCalculator(object):
         queries = db.queries
         # create list to hold each query result
         resultsList = []
+        # create counters for lines and errorLines
+        lines = 0
+        errorLines = 0
         # parse snp.switched
         inFile = os.path.join(out_dir_tmp, "snp.switched")
         with open(inFile) as in_f:
             needHeader = True
             for line in in_f:
+                # increment lines
+                lines += 1
+                # get columns
                 cols = line.rstrip().split("\t")
                 # build query dictionary
                 query = {
@@ -117,7 +123,10 @@ class FeatureCalculator(object):
                 queries.insert(query)
                 # if data not in db
                 if item == None:
-                    # line isn't valid, write to error log with css
+                    # line isn't valid
+                    # increment errorLines
+                    errorLines += 1
+                    # write to error log with css
                     errorMessage = "<div class='invalid'>Error: {0} {1} {2} {3} is not a valid combination. Line will not be included in results</div>".format(
                         cols[0], cols[1], cols[2], cols[3]
                     )
@@ -169,92 +178,94 @@ class FeatureCalculator(object):
         outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
         invalidFile = os.path.join(self.out_dir, "invalid.txt")
 
-        # create list of indices
-        indices = []
-        # sore resultsList by strand
-        strandIndex = resultsList[0].index("strand")
-        indices.append(strandIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[strandIndex])
-        # sore resultsList by name
-        nameIndex = resultsList[0].index("name")
-        indices.append(nameIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[nameIndex])
-        # sort resultsList by splicing_site
-        ssIndex = resultsList[0].index("splicing_site")
-        indices.append(ssIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[ssIndex])
-        # sore resultsList by fpr
-        fprIndex = resultsList[0].index("fpr")
-        indices.append(fprIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
-        # sore resultsList by tpr
-        tprIndex = resultsList[0].index("tpr")
-        indices.append(tprIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[tprIndex])
-        # sore resultsList by prob
-        probIndex = resultsList[0].index("prob")
-        indices.append(probIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[probIndex])
-        # sore resultsList by disease
-        diseaseIndex = resultsList[0].index("disease")
-        indices.append(diseaseIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[diseaseIndex])
-        # sore resultsList by alt
-        altIndex = resultsList[0].index("alt")
-        indices.append(altIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[altIndex])
-        # sore resultsList by ref
-        refIndex = resultsList[0].index("ref")
-        indices.append(refIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[refIndex])
-        # sore resultsList by pos
-        posIndex = resultsList[0].index("pos")
-        indices.append(posIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[posIndex])
-        # sore resultsList by #chrom
-        chromIndex = resultsList[0].index("#chrom")
-        indices.append(chromIndex)
-        resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[chromIndex])
+        # if there is valid output
+        if errorLines < lines:
+            # create list of indices
+            indices = []
+            # sore resultsList by strand
+            strandIndex = resultsList[0].index("strand")
+            indices.append(strandIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[strandIndex])
+            # sore resultsList by name
+            nameIndex = resultsList[0].index("name")
+            indices.append(nameIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[nameIndex])
+            # sort resultsList by splicing_site
+            ssIndex = resultsList[0].index("splicing_site")
+            indices.append(ssIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[ssIndex])
+            # sore resultsList by fpr
+            fprIndex = resultsList[0].index("fpr")
+            indices.append(fprIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
+            # sore resultsList by tpr
+            tprIndex = resultsList[0].index("tpr")
+            indices.append(tprIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[tprIndex])
+            # sore resultsList by prob
+            probIndex = resultsList[0].index("prob")
+            indices.append(probIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[probIndex])
+            # sore resultsList by disease
+            diseaseIndex = resultsList[0].index("disease")
+            indices.append(diseaseIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[diseaseIndex])
+            # sore resultsList by alt
+            altIndex = resultsList[0].index("alt")
+            indices.append(altIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[altIndex])
+            # sore resultsList by ref
+            refIndex = resultsList[0].index("ref")
+            indices.append(refIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[refIndex])
+            # sore resultsList by pos
+            posIndex = resultsList[0].index("pos")
+            indices.append(posIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[posIndex])
+            # sore resultsList by #chrom
+            chromIndex = resultsList[0].index("#chrom")
+            indices.append(chromIndex)
+            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[chromIndex])
 
-        # create indice order
-        order = []
-        for i in reversed(indices):
-            # add index to order
-            order.append(i)
-            # add header string to headers
-            headers += resultsList[0][i] + "\t"
-        # add the rest of the headers after the sorted ones
-        for i, value in enumerate(resultsList[0]):
-            if i not in indices:
-                headers += value + "\t"
-        # remove final \t and replace with \n
-        headers = headers[:-2] + "\n"
-
-        # add the rest of the indices to order
-        for i in range(len(resultsList[0])):
-            if i not in order:
+            # create indice order
+            order = []
+            for i in reversed(indices):
+                # add index to order
                 order.append(i)
+                # add header string to headers
+                headers += resultsList[0][i] + "\t"
+            # add the rest of the headers after the sorted ones
+            for i, value in enumerate(resultsList[0]):
+                if i not in indices:
+                    headers += value + "\t"
+            # remove final \t and replace with \n
+            headers = headers[:-2] + "\n"
 
-        if len(invalid_str) > 0:
-            # invalid lines exits, write to file
-            with open(invalidFile, "w") as invalid_f:
-                invalid_f.write(invalid_str)
+            # add the rest of the indices to order
+            for i in range(len(resultsList[0])):
+                if i not in order:
+                    order.append(i)
 
-        with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
-            # write output file strings to snp.prediction.txt, snp.prediction.json
-            out_f.write(headers)
-            for i in resultsList[1:]:
-                for j in order:
-                    # fix strand type conversion
-                    if j != strandIndex:
-                        out_f.write(i[j] + "\t")
-                    else:
-                        if i[j] == "-0":
-                            out_f.write("-\t")
-                        elif i[j] == "0":
-                            out_f.write("+\t")
-                out_f.write("\n")
-            out_json_f.write(json_str)
+            if len(invalid_str) > 0:
+                # invalid lines exits, write to file
+                with open(invalidFile, "w") as invalid_f:
+                    invalid_f.write(invalid_str)
+
+            with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
+                # write output file strings to snp.prediction.txt, snp.prediction.json
+                out_f.write(headers)
+                for i in resultsList[1:]:
+                    for j in order:
+                        # fix strand type conversion
+                        if j != strandIndex:
+                            out_f.write(i[j] + "\t")
+                        else:
+                            if i[j] == "-0":
+                                out_f.write("-\t")
+                            elif i[j] == "0":
+                                out_f.write("+\t")
+                    out_f.write("\n")
+                out_json_f.write(json_str)
 
 
 def main():

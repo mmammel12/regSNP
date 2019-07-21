@@ -8,11 +8,11 @@ import sys
 
 try:
     from regsnp_intron.feature_calculator import FeatureCalculator
-    from regsnp_intron.predictor.predictor import Predictor
 except ImportError:
-    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
-    from regsnp_intron.feature_calculator import FeatureCalculator
-    from regsnp_intron.predictor.predictor import Predictor
+    sys.path.append(
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "regsnp_intron")
+    )
+    from feature_calculator import FeatureCalculator
 
 
 def main():

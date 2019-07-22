@@ -23,9 +23,16 @@ pip install pysam==0.15.2
 pip install pymongo
 ```
 
-2. You will also need to unzip 'humanGenome.zip' and make sure settings.json has the correct directory to access the human genome file
+2. You will also need a human genome file, run the following command to download then extract it
 
-3. Then run the following commands to clone the repository and install the program.
+```bash
+wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
+gunzip hg19.fa.gz
+```
+
+3. Make sure you have the settings file set up correctly (see [Configuration](#Configuration))
+
+4. Then run the following commands to clone the repository and install the program.
 
 ```bash
 git clone https://github.com/mmammel12/regSNP.git

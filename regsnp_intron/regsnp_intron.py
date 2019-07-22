@@ -6,19 +6,15 @@ import os.path
 import shutil
 import sys
 
-try:
-    from regsnp_intron.feature_calculator import FeatureCalculator
-except ImportError:
-    sys.path.append(os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), '..'))
-    from feature_calculator import FeatureCalculator
+
+from feature_calculator import FeatureCalculator
 
 
 def main():
     default_setting_path = os.path.realpath(
         os.path.join(
             os.path.dirname(os.path.realpath(__file__)
-                            ), "settings/settings.json"
+                            ), "../regsnp_intron/settings/settings.json"
         )
     )
     parser = argparse.ArgumentParser(

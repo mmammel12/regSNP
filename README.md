@@ -15,7 +15,12 @@ The following Python libraries are also required. They will be automatically ins
 
 ## Installation
 
-1. To install, you need to install all the required Python libraries first:
+1. The easiest way is to install with pip (recommended). This will also install all the required Python libraries: 
+```bash
+pip install regsnp
+```
+
+2. To install manually, you need to install all the required Python libraries first:
 
 ```bash
 pip install pandas==0.17.1
@@ -23,7 +28,9 @@ pip install pysam==0.15.2
 pip install pymongo
 ```
 
-2. Then run the following commands to clone the repository and install the program.
+3. You will also need to unzip 'humanGenome.zip' and make sure settings.json has the correct directory to access the human genome file
+
+4. Then run the following commands to clone the repository and install the program.
 
 ```bash
 git clone https://github.com/mmammel12/regSNP.git
@@ -51,7 +58,8 @@ sudo python setup.py install
 {
   "dbURI": "MONGO_DB_URI",
   "dbUsername": "MONGO_DB_USERNAME",
-  "dbPassword": "MONGO_DB_PASSWORD"
+  "dbPassword": "MONGO_DB_PASSWORD",
+  "hg_dir": "PATH/TO/HUMAN GENOME FILE (one is included in humanGenome.zip, )"
 }
 ```
 

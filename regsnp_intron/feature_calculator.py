@@ -23,6 +23,7 @@ class FeatureCalculator(object):
         self.db_pass = os.path.expanduser(settings["dbPassword"])
         self.ifname = os.path.expanduser(ifname)
         self.out_dir = os.path.expanduser(out_dir)
+        self.hg_dir = os.path.expanduser(settings["hg_dir"])
         self.iformat = iformat  # input format: txt or vcf
         self.logger = logging.getLogger(__name__)
 
@@ -58,7 +59,6 @@ class FeatureCalculator(object):
         # Check input format
         self.logger.info("Checking input file format.")
         snp = SNP(self.ifname)
-        ref_name = os.path.join(self.db_dir, "hg19/hg19.fa")
 
         # Sort input
         self.logger.info("Sorting input file.")
@@ -68,7 +68,7 @@ class FeatureCalculator(object):
         self.logger.info("Switching alleles.")
         snp.switch_alleles(
             os.path.join(out_dir_tmp, "snp.sorted"),
-            ref_name,
+            self.hg_dir,
             os.path.join(out_dir_tmp, "snp.switched"),
         )
 
@@ -85,10 +85,10 @@ class FeatureCalculator(object):
         json_str = '{"data":['
         # create string to hold invalid lines
         invalid_str = ""
-        # create connection to mongoD serverAdminB
+        # create connection to mongoDB
         client = pymongo.MongoClient(
             self.db_URI, username=self.db_user, password=self.db_pass
-        )  # CHANGE THIS TO MONGO URI AND LOGIN CREDENTIALS
+        )
         # get the DB
         db = client.muriDB
         # get the collection

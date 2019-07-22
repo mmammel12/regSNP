@@ -1,8 +1,5 @@
 import setuptools
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
 setuptools.setup(
     name="regsnp",
     version="0.2.5.11",
@@ -21,6 +18,4 @@ setuptools.setup(
     author="linhai, mamammel",
     author_email="linhai@iupui.edu, mamammel@iu.edu",
     description="Predict disease-causing probability of human intronic SNVs.",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
 )

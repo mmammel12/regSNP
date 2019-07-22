@@ -10,3 +10,6 @@
 /*.egg
 
 .idea/workspace.xml
+
+# human genome folder
+/humanGenome/

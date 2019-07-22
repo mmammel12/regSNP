@@ -67,8 +67,12 @@ sudo python setup.py install
 
 ## Usage
 
+from the regSNP directory run the following commands:
+
 ```bash
-usage: regsnp_intron [-h] [-s SFNAME] [-f] ifname out_dir
+cd regsnp_intron
+python regsnp_intron.py [-h] [-s SFNAME] [-f] ifname out_dir
+```
 
 Given a list of intronic SNVs, predict the disease-causing probability based
 on genomic and protein structural features.
@@ -84,7 +88,6 @@ optional arguments:
                         located at: regsnp_intron/settings/settings.json
   -f, --force           overwrite existing directory
 
-```
 
 ## Output
 

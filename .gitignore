@@ -10,6 +10,3 @@
 /*.egg
 
 .idea/workspace.xml
-
-# large human genome files
-/humanGenome/

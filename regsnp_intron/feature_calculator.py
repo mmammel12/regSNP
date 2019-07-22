@@ -170,6 +170,12 @@ class FeatureCalculator(object):
                         simple_json["strand"] = "+"
                     # write data as JSON
                     json_str += dumps(simple_json) + ","
+
+        if len(invalid_str) > 0:
+                # invalid lines exits, write to file
+            with open(invalidFile, "w") as invalid_f:
+                invalid_f.write(invalid_str)
+
         # if there is valid output
         if errorLines < lines:
             # end json_str
@@ -256,11 +262,6 @@ class FeatureCalculator(object):
             for i in range(len(resultsList[0])):
                 if i not in order:
                     order.append(i)
-
-            if len(invalid_str) > 0:
-                # invalid lines exits, write to file
-                with open(invalidFile, "w") as invalid_f:
-                    invalid_f.write(invalid_str)
 
             with open(outFile, "w") as out_f, open(outJSONFile, "w") as out_json_f:
                 # write output file strings to snp.prediction.txt, snp.prediction.json

@@ -11,5 +11,5 @@
 
 .idea/workspace.xml
 
-# human genome folder
-/humanGenome/
+# human genome 
+hg19.fa

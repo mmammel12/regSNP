@@ -2,5 +2,5 @@
   "dbURI": "mongodb+srv://cluster0-souoy.gcp.mongodb.net/test",
   "dbUsername": "serverAdmin",
   "dbPassword": "s3cr3tpass",
-  "hg_dir": "../files/hg19.fa"
+  "hg_dir": "../hg19.fa"
 }

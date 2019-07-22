@@ -6,7 +6,7 @@ import os.path
 import shutil
 import sys
 
-from regsnp_intron.feature_calculator import FeatureCalculator
+from feature_calculator import FeatureCalculator
 
 
 def main():

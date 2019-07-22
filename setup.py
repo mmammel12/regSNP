@@ -5,9 +5,9 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="regsnp",
-    version="0.2.5.10",
+    version="0.2.5.11",
     packages=setuptools.find_packages(),
-    scripts=["regsnp_intron.py"],
+    scripts=["regsnp_intron/regsnp_intron.py"],
     install_requires=["pandas==0.17.1", "pysam==0.15.2", "pymongo"],
     include_package_data=True,
     classifiers=[

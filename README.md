@@ -61,7 +61,7 @@ sudo python setup.py install
   "dbURI": "MONGO_DB_URI",
   "dbUsername": "MONGO_DB_USERNAME",
   "dbPassword": "MONGO_DB_PASSWORD",
-  "hg_dir": "PATH/TO/HUMAN GENOME FILE (one is included in humanGenome.zip, )"
+  "hg_dir": "PATH/TO/HUMAN GENOME FILE"
 }
 ```
 

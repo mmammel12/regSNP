@@ -171,6 +171,7 @@ class FeatureCalculator(object):
                     # write data as JSON
                     json_str += dumps(simple_json) + ","
 
+        invalidFile = os.path.join(self.out_dir, "invalid.txt")
         if len(invalid_str) > 0:
                 # invalid lines exits, write to file
             with open(invalidFile, "w") as invalid_f:
@@ -185,7 +186,6 @@ class FeatureCalculator(object):
             # create file called snp.prediction.txt and snp.prediction.json and invalid.txt in out_dir
             outFile = os.path.join(self.out_dir, "snp.prediction.txt")
             outJSONFile = os.path.join(self.out_dir, "snp.prediction.json")
-            invalidFile = os.path.join(self.out_dir, "invalid.txt")
 
             # create list of indices
             indices = []

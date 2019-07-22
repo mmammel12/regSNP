@@ -15,7 +15,7 @@ The following Python libraries are also required. They will be automatically ins
 
 ## Installation
 
-1. To install manually, you need to install all the required Python libraries first:
+1. To install, you need to install all the required Python libraries first:
 
 ```bash
 pip install pandas==0.17.1
@@ -23,34 +23,19 @@ pip install pysam==0.15.2
 pip install pymongo
 ```
 
-2. You will also need a human genome file, run the following command to download then extract it
+2. Then run the following command to clone the repository.
+
+```bash
+git clone https://github.com/mmammel12/regSNP.git
+```
+3. You will also need a human genome file, run the following commands to download then extract it
 
 ```bash
 wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz
 gunzip hg19.fa.gz
 ```
 
-3. Make sure you have the settings file set up correctly (see [Configuration](#Configuration))
-
-4. Then run the following commands to clone the repository and install the program.
-
-```bash
-git clone https://github.com/mmammel12/regSNP.git
-cd regSNP
-python setup.py install
-```
-
-If you run into:
-
-```
-error: can't create or remove files in install directory
-```
-
-Try using:
-
-```bash
-sudo python setup.py install
-```
+2. Make sure you have the settings file set up correctly (see [Configuration](#Configuration))
 
 ## Configuration
 
@@ -61,7 +46,7 @@ sudo python setup.py install
   "dbURI": "MONGO_DB_URI",
   "dbUsername": "MONGO_DB_USERNAME",
   "dbPassword": "MONGO_DB_PASSWORD",
-  "hg_dir": "PATH/TO/HUMAN GENOME FILE"
+  "hg_dir": "PATH/TO/HUMAN_GENOME_FILE"
 }
 ```
 

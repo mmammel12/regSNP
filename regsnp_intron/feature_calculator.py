@@ -109,7 +109,7 @@ class FeatureCalculator(object):
                 # get columns
                 cols = line.rstrip().split("\t")
                 # check if first column is prepended with chr
-                if len("chr" not in cols[0]):
+                if "chr" not in cols[0]:
                     cols[0] = "chr" + cols[0]
                 # build query dictionary
                 query = {

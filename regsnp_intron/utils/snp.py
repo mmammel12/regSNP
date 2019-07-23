@@ -36,6 +36,8 @@ class SNP(object):
         ) as out_f:
             for line in in_f:
                 cols = line.strip().split()
+                if "chr" not in cols[0]:
+                    cols[0] = "chr" + cols[0]
                 chrom, pos, ref_allele, alt_allele = cols
                 pos = int(pos)
                 if (

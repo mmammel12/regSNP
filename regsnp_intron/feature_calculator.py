@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 import json
 import logging
@@ -87,9 +88,7 @@ class FeatureCalculator(object):
         # create string to hold invalid lines
         invalid_str = ""
         # create connection to mongoDB
-        client = pymongo.MongoClient(
-            self.db_URI, username=self.db_user, password=self.db_pass
-        )
+        client = pymongo.MongoClient(host="192.168.69.202", port=27017)
         # get the DB
         db = client.muriDB
         # get the collection

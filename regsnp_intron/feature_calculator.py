@@ -1,4 +1,3 @@
-#!/usr/bin/env python2.7
 import argparse
 import json
 import logging
@@ -49,7 +48,8 @@ class FeatureCalculator(object):
                 if delim.delimiter != "\t":
                     # change delimiter to '\t'
                     reader = csv.reader(in_f, delimiter=delim.delimiter)
-                    fixed_file = os.path.join(self.out_dir, "snp_fixed_input.txt")
+                    fixed_file = os.path.join(
+                        self.out_dir, "snp_fixed_input.txt")
                     with open(fixed_file, "w") as out_f:
                         writer = csv.writer(out_f, delimiter="\t")
                         writer.writerows(reader)
@@ -74,7 +74,7 @@ class FeatureCalculator(object):
 
         # pull data from db
         self._queryDB()
-        self._writeToFrontEnd()
+        # self._writeToFrontEnd()
 
     def _queryDB(self):
         self.logger.info("Querying database")
@@ -196,11 +196,13 @@ class FeatureCalculator(object):
             # sore resultsList by strand
             strandIndex = resultsList[0].index("strand")
             indices.append(strandIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[strandIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[strandIndex])
             # sore resultsList by name
             nameIndex = resultsList[0].index("name")
             indices.append(nameIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[nameIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[nameIndex])
             # sort resultsList by splicing_site
             ssIndex = resultsList[0].index("splicing_site")
             indices.append(ssIndex)
@@ -208,35 +210,43 @@ class FeatureCalculator(object):
             # sore resultsList by fpr
             fprIndex = resultsList[0].index("fpr")
             indices.append(fprIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[fprIndex])
             # sore resultsList by tpr
             tprIndex = resultsList[0].index("tpr")
             indices.append(tprIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[tprIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[tprIndex])
             # sore resultsList by prob
             probIndex = resultsList[0].index("prob")
             indices.append(probIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[probIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[probIndex])
             # sore resultsList by disease
             diseaseIndex = resultsList[0].index("disease")
             indices.append(diseaseIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[diseaseIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[diseaseIndex])
             # sore resultsList by alt
             altIndex = resultsList[0].index("alt")
             indices.append(altIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[altIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[altIndex])
             # sore resultsList by ref
             refIndex = resultsList[0].index("ref")
             indices.append(refIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[refIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[refIndex])
             # sore resultsList by pos
             posIndex = resultsList[0].index("pos")
             indices.append(posIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[posIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[posIndex])
             # sore resultsList by #chrom
             chromIndex = resultsList[0].index("#chrom")
             indices.append(chromIndex)
-            resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[chromIndex])
+            resultsList[1:] = sorted(
+                resultsList[1:], key=lambda x: x[chromIndex])
 
             # create indice order
             order = []
@@ -273,13 +283,13 @@ class FeatureCalculator(object):
                     out_f.write("\n")
                 out_json_f.write(json_str)
 
-    def _writeToFrontEnd(self):
-        srv = Connection(
-            host="HOST_FTP_SERVER", username="USERNAME", password="PASSWORD"
-        )  # TODO input server, username, pass
+    # def _writeToFrontEnd(self):
+    #     srv = Connection(
+    #         host="HOST_FTP_SERVER", username="USERNAME", password="PASSWORD"
+    #     )  # TODO input server, username, pass
 
-        srv.put_d(self.out_dir)
-        srv.close()
+    #     srv.put_d(self.out_dir)
+    #     srv.close()
 
 
 def main():

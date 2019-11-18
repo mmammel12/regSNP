@@ -13,8 +13,7 @@ from feature_calculator import FeatureCalculator
 def main():
     default_setting_path = os.path.realpath(
         os.path.join(
-            os.path.dirname(os.path.realpath(__file__)
-                            ), "settings/settings.json"
+            os.path.dirname(os.path.realpath(__file__)), "settings/settings.json"
         )
     )
     parser = argparse.ArgumentParser(

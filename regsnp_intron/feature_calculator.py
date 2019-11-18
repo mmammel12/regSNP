@@ -273,10 +273,12 @@ class FeatureCalculator(object):
 
     def _writeToFrontEnd(self):
         srv = Connection(
-            host="HOST_FTP_SERVER", username="USERNAME", password="PASSWORD"
-        )  # TODO input server, username, pass
+            host="regsnps-test.ccbb.iupui.edu", username="mamammel", password="Dallas4Seagull1"
+        )
+       
+        front_end_dir = self.out_dir[22:]
 
-        srv.put_d(self.out_dir)
+        srv.put_r(self.out_dir, front_end_dir, preserve_mtime=True)
         srv.close()
 
 

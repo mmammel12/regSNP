@@ -19,11 +19,8 @@ from utils.snp import SNP
 class FeatureCalculator(object):
     def __init__(self, settings, ifname, out_dir, iformat="txt"):
         self.settings = settings
-        self.db_URI = os.path.expanduser(settings["dbURI"])
-        self.db_user = os.path.expanduser(settings["dbUsername"])
-        self.db_pass = os.path.expanduser(settings["dbPassword"])
-        self.ifname = os.path.expanduser(ifname)
-        self.out_dir = os.path.expanduser(out_dir)
+        self.ifname = "/data/regsnps-test/" + ifname
+        self.out_dir = "/data/regsnps-test/" + out_dir
         self.hg_dir = os.path.expanduser(settings["hg_dir"])
         self.iformat = iformat  # input format: txt or vcf
         self.logger = logging.getLogger(__name__)
@@ -74,7 +71,6 @@ class FeatureCalculator(object):
 
         # pull data from db
         self._queryDB()
-        self._writeToFrontEnd()
 
     def _queryDB(self):
         self.logger.info("Querying database")
@@ -270,18 +266,6 @@ class FeatureCalculator(object):
                                 out_f.write("+\t")
                     out_f.write("\n")
                 out_json_f.write(json_str)
-
-    def _writeToFrontEnd(self):
-        srv = Connection(
-            host="regsnps-test.ccbb.iupui.edu",
-            username="mamammel",
-            password="Dallas4Seagull1",
-        )
-
-        front_end_dir = self.out_dir[22:]
-
-        srv.put_r(self.out_dir, front_end_dir, preserve_mtime=True)
-        srv.close()
 
 
 def main():

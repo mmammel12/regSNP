@@ -1,8 +1,8 @@
+# THIS VERSION IS ONLY MEANT TO BE USED AS A MIDDLEWARE FOR THE WEBSITE
+
 # regsnp-intron
 
 regsnp-intron predicts the disease-causing probability of intronic single nucleotide variants (iSNVs) based on both genomic and protein structural features.
-
-# THIS VERSION IS ONLY MEANT TO BE USED AS A MIDDLEWARE FOR THE WEBSITE
 
 ## Prerequisites
 

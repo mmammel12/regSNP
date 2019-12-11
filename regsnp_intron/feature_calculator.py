@@ -71,7 +71,6 @@ class FeatureCalculator(object):
 
         # pull data from db
         self._queryDB()
-        # self._writeToFrontEnd()
 
     def _queryDB(self):
         self.logger.info("Querying database")

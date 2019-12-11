@@ -8,7 +8,6 @@ import os.path
 import pymongo
 import json
 import datetime
-from pysftp import Connection
 from bson.json_util import dumps
 import csv
 
@@ -281,15 +280,6 @@ class FeatureCalculator(object):
                                 out_f.write("+\t")
                     out_f.write("\n")
                 out_json_f.write(json_str)
-
-    # def _writeToFrontEnd(self):
-    #     srv = Connection(
-    #         host="HOST_FTP_SERVER", username="USERNAME", password="PASSWORD"
-    #     )  # TODO input server, username, pass
-
-    #     srv.put_d(self.out_dir)
-    #     srv.close()
-
 
 def main():
     parser = argparse.ArgumentParser(

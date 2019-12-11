@@ -18,11 +18,8 @@ from utils.snp import SNP
 class FeatureCalculator(object):
     def __init__(self, settings, ifname, out_dir, iformat="txt"):
         self.settings = settings
-        self.db_URI = os.path.expanduser(settings["dbURI"])
-        self.db_user = os.path.expanduser(settings["dbUsername"])
-        self.db_pass = os.path.expanduser(settings["dbPassword"])
-        self.ifname = os.path.expanduser(ifname)
-        self.out_dir = os.path.expanduser(out_dir)
+        self.ifname = ifname
+        self.out_dir = out_dir
         self.hg_dir = os.path.expanduser(settings["hg_dir"])
         self.iformat = iformat  # input format: txt or vcf
         self.logger = logging.getLogger(__name__)

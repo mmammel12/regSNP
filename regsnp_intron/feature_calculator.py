@@ -110,7 +110,7 @@ class FeatureCalculator(object):
                 # build query dictionary
                 query = {
                     "#chrom": cols[0],
-                    "pos": cols[1],
+                    "pos": int(cols[1]),
                     "ref": cols[2],
                     "alt": cols[3],
                 }
@@ -153,7 +153,7 @@ class FeatureCalculator(object):
                         "pos": item["pos"],
                         "alt": item["alt"],
                         "ref": item["ref"],
-                        "disease": item["disease"],
+                        "disease": item["disease_x"],
                         "splicing_site": item["splicing_site"],
                         "tpr": item["tpr"],
                         "fpr": item["fpr"],
@@ -268,7 +268,7 @@ class FeatureCalculator(object):
                     for j in order:
                         # fix strand type conversion
                         if j != strandIndex:
-                            out_f.write(i[j] + "\t")
+                            out_f.write(str(i[j]) + "\t")
                         else:
                             if i[j] == "-0":
                                 out_f.write("-\t")

@@ -8,7 +8,6 @@ import os.path
 import pymongo
 import json
 import datetime
-from pysftp import Connection
 from bson.json_util import dumps
 import csv
 
@@ -19,8 +18,8 @@ from utils.snp import SNP
 class FeatureCalculator(object):
     def __init__(self, settings, ifname, out_dir, iformat="txt"):
         self.settings = settings
-        self.ifname = "/data/regsnps-test/" + ifname
-        self.out_dir = "/data/regsnps-test/" + out_dir
+        self.ifname = ifname
+        self.out_dir = out_dir
         self.hg_dir = os.path.expanduser(settings["hg_dir"])
         self.iformat = iformat  # input format: txt or vcf
         self.logger = logging.getLogger(__name__)
@@ -85,9 +84,9 @@ class FeatureCalculator(object):
         # create connection to mongoDB
         client = pymongo.MongoClient(host="192.168.69.202", port=27017)
         # get the DB
-        db = client.muriDB
+        db = client.testDB
         # get the collection
-        items = db.muriCol
+        items = db.testCol
         # get the queries collection
         queries = db.queries
         # create list to hold each query result
@@ -110,7 +109,7 @@ class FeatureCalculator(object):
                 # build query dictionary
                 query = {
                     "#chrom": cols[0],
-                    "pos": cols[1],
+                    "pos": int(cols[1]),
                     "ref": cols[2],
                     "alt": cols[3],
                 }
@@ -153,7 +152,7 @@ class FeatureCalculator(object):
                         "pos": item["pos"],
                         "alt": item["alt"],
                         "ref": item["ref"],
-                        "disease": item["disease"],
+                        "disease": item["disease_x"],
                         "splicing_site": item["splicing_site"],
                         "tpr": item["tpr"],
                         "fpr": item["fpr"],
@@ -187,11 +186,11 @@ class FeatureCalculator(object):
 
             # create list of indices
             indices = []
-            # sort resultsList by strand
+            # sore resultsList by strand
             strandIndex = resultsList[0].index("strand")
             indices.append(strandIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[strandIndex])
-            # sort resultsList by name
+            # sore resultsList by name
             nameIndex = resultsList[0].index("name")
             indices.append(nameIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[nameIndex])
@@ -199,35 +198,35 @@ class FeatureCalculator(object):
             ssIndex = resultsList[0].index("splicing_site")
             indices.append(ssIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[ssIndex])
-            # sort resultsList by fpr
+            # sore resultsList by fpr
             fprIndex = resultsList[0].index("fpr")
             indices.append(fprIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[fprIndex])
-            # sort resultsList by tpr
+            # sore resultsList by tpr
             tprIndex = resultsList[0].index("tpr")
             indices.append(tprIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[tprIndex])
-            # sort resultsList by prob
+            # sore resultsList by prob
             probIndex = resultsList[0].index("prob")
             indices.append(probIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[probIndex])
-            # sort resultsList by disease
-            diseaseIndex = resultsList[0].index("disease")
+            # sore resultsList by disease
+            diseaseIndex = resultsList[0].index("disease_x")
             indices.append(diseaseIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[diseaseIndex])
-            # sort resultsList by alt
+            # sore resultsList by alt
             altIndex = resultsList[0].index("alt")
             indices.append(altIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[altIndex])
-            # sort resultsList by ref
+            # sore resultsList by ref
             refIndex = resultsList[0].index("ref")
             indices.append(refIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[refIndex])
-            # sort resultsList by pos
+            # sore resultsList by pos
             posIndex = resultsList[0].index("pos")
             indices.append(posIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[posIndex])
-            # sort resultsList by #chrom
+            # sore resultsList by #chrom
             chromIndex = resultsList[0].index("#chrom")
             indices.append(chromIndex)
             resultsList[1:] = sorted(resultsList[1:], key=lambda x: x[chromIndex])
@@ -258,7 +257,7 @@ class FeatureCalculator(object):
                     for j in order:
                         # fix strand type conversion
                         if j != strandIndex:
-                            out_f.write(i[j] + "\t")
+                            out_f.write(str(i[j]) + "\t")
                         else:
                             if i[j] == "-0":
                                 out_f.write("-\t")

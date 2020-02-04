@@ -11,5 +11,7 @@
 
 .idea/workspace.xml
 
-# human genome 
+# human genome
 hg19.fa
+hg19.fa.fai
+

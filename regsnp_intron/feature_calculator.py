@@ -27,49 +27,66 @@ class FeatureCalculator(object):
     def calculate_feature(self):
         out_dir_tmp = os.path.join(self.out_dir, "tmp")
         os.mkdir(out_dir_tmp)
+        errorFile = False
 
-        # Convert input vcf to txt
-        if self.iformat == "vcf":
-            vcf_input = VCF(self.ifname)
-            txt_input = os.path.join(out_dir_tmp, "snp_input.txt")
-            vcf_input.convert_to_txt(txt_input)
-            self.ifname = txt_input
+        try:
+            # Convert input vcf to txt
+            if self.iformat == "vcf":
+                vcf_input = VCF(self.ifname)
+                txt_input = os.path.join(out_dir_tmp, "snp_input.txt")
+                vcf_input.convert_to_txt(txt_input)
+                self.ifname = txt_input
 
-        # change delimiter to '\t' if necessary
-        if self.iformat == "txt" or self.iformat == "csv":
-            # determine delimiter
-            with open(self.ifname) as in_f:
-                delim = csv.Sniffer().sniff(in_f.read(1024))
-                in_f.seek(0)
-                # if delimiter is not '\t'
-                if delim.delimiter != "\t":
-                    # change delimiter to '\t'
-                    reader = csv.reader(in_f, delimiter=delim.delimiter)
-                    fixed_file = os.path.join(self.out_dir, "snp_fixed_input.txt")
-                    with open(fixed_file, "w") as out_f:
-                        writer = csv.writer(out_f, delimiter="\t")
-                        writer.writerows(reader)
-                        # set fixed_file to self.ifname
-                        self.ifname = fixed_file
+            # change delimiter to '\t' if necessary
+            if self.iformat == "txt" or self.iformat == "csv":
+                # determine delimiter
+                with open(self.ifname) as in_f:
+                    delim = csv.Sniffer().sniff(in_f.read(1024))
+                    in_f.seek(0)
+                    # if delimiter is not '\t'
+                    if delim.delimiter != "\t":
+                        # change delimiter to '\t'
+                        reader = csv.reader(in_f, delimiter=delim.delimiter)
+                        fixed_file = os.path.join(self.out_dir, "snp_fixed_input.txt")
+                        with open(fixed_file, "w") as out_f:
+                            writer = csv.writer(out_f, delimiter="\t")
+                            writer.writerows(reader)
+                            # set fixed_file to self.ifname
+                            self.ifname = fixed_file
 
-        # Check input format
-        self.logger.info("Checking input file format.")
-        snp = SNP(self.ifname)
+            # Check input format
+            self.logger.info("Checking input file format.")
+            snp = SNP(self.ifname)
 
-        # Sort input
-        self.logger.info("Sorting input file.")
-        snp.sort(os.path.join(out_dir_tmp, "snp.sorted"))
+            # Sort input
+            self.logger.info("Sorting input file.")
+            snp.sort(os.path.join(out_dir_tmp, "snp.sorted"))
 
-        # Switch alleles
-        self.logger.info("Switching alleles.")
-        snp.switch_alleles(
-            os.path.join(out_dir_tmp, "snp.sorted"),
-            self.hg_dir,
-            os.path.join(out_dir_tmp, "snp.switched"),
-        )
+        except:
+            errorMessage = "<div class='invalid'>An error occurred with the input file. Please check the file and resubmit.</div>"
+            self.logger.info(errorMessage)
+            errorFile = True
 
-        # pull data from db
-        self._queryDB()
+        if not errorFile:
+            # Switch alleles
+            self.logger.info("Switching alleles.")
+            snp.switch_alleles(
+                os.path.join(out_dir_tmp, "snp.sorted"),
+                self.hg_dir,
+                os.path.join(out_dir_tmp, "snp.switched"),
+            )
+
+            # pull data from db
+            self._queryDB()
+        else:
+            invalidFile = os.path.join(self.out_dir, "invalid.txt")
+            # invalid lines exits, write to file
+            with open(invalidFile, "w") as invalid_f:
+                invalid_f.write(
+                    "Error occurred while reading input file of type {0}".format(
+                        self.iformat
+                    )
+                )
 
     def _queryDB(self):
         self.logger.info("Querying database")

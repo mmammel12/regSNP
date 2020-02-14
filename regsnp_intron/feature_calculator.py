@@ -101,9 +101,9 @@ class FeatureCalculator(object):
         # create connection to mongoDB
         client = pymongo.MongoClient(host="192.168.69.202", port=27017)
         # get the DB
-        db = client.testDB
+        db = client.muriDB
         # get the collection
-        items = db.testCol
+        items = db.muriCol
         # get the queries collection
         queries = db.queries
         # create list to hold each query result
